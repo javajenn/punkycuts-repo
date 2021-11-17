@@ -140,9 +140,10 @@ DATABASES = {
         'USER': 'punkycuts',
         'PASSWORD': 'database',
         'HOST': 'punkycuts.mysql.pythonanywhere-services.com',
-    },
+    }
      'TEST': {
-          'NAME': 'punkycuts$test_punky_cuts_db',
+          'NAME': '<your username>$test_<your database name>',
+    }
 }
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
