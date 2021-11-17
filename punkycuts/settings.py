@@ -140,7 +140,7 @@ DATABASES = {
         'USER': 'punkycuts',
         'PASSWORD': 'database',
         'HOST': 'punkycuts.mysql.pythonanywhere-services.com',
-    }
+    },
      'TEST': {
           'NAME': '<your username>$test_<your database name>',
     }
