@@ -1,0 +1,54 @@
+{% extends "store_index/base.html" %}
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="data:,">
+        
+        
+        {% block head %}
+        <title>Log In</title>
+        {% endblock %}
+
+    </head>
+    <body>
+    {% block content %}
+
+        {% if form.errors %}
+            <p>Please try again.</p>
+        {% endif %}
+        <div class="container mt-3">
+            <div class="row justify-content-center border">
+                <div class="mt-4 col-12 d-flex justify-content-center">
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <table>
+                            <tr>
+                                <td>{{ form.username.label_tag }}</td>
+                                <td>{{ form.username }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ form.password.label_tag }}</td>
+                                <td>{{ form.password }}</td>
+                            </tr>
+                            <tr class="text-center">
+                                <td colspan="2">
+                                    <input type="submit" value="login"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+                <div class="mt-4 col-12 d-flex justify-content-center">
+                    <p>Don't have an account? Click 
+                    <a href="{% url 'signup' %}">here</a>
+                    to sign up!</p>
+                </div>
+            </div>
+
+        </div>
+    {% endblock %}
+    </body>
+</html>

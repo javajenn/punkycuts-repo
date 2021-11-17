@@ -1,0 +1,222 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="data:,">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <title>
+        {% block title %}
+        {% endblock %}
+        </title>
+
+        {% block head %}
+        
+        {% endblock %}
+
+        {% block extrahead %}
+        {% endblock %}
+
+        <style>
+        .nav-link {
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+        .nav-item:hover .dropdown-menu{
+            display: block!important;
+        }
+        .account:hover .dropdown-menu{
+            display: block!important;
+            margin-top: 37px;
+        }
+        .dropdown-item {
+            text-align: center;
+        }
+        .dropdown-menu {
+            min-width:100%;
+        }
+        .page-container {
+            min-height: 100vh;
+        }
+        main {
+            padding-bottom: 1rem;
+        }
+        #btngroup {
+            position: relative;
+            z-index: 1030;
+        }
+        .btn-dark:hover { 
+            color: rgba(255,255,255,0.75);
+        }
+        .notification{
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+}
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <script
+            src="https://code.jquery.com/jquery-3.6.0.js"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            crossorigin="anonymous">        
+        </script>
+        <script>
+            $(document).ready(function(){
+                $('[data-bs-toggle="popover"]').popover();   
+            });
+        </script>
+    </head>
+    <body>
+        <div class="page-container container d-flex flex-column">
+            <header>
+                <div class="container">
+                    <div class="card">
+                        <img class="card-img-top img-fluid" src="{% static '/banner.png' %}" alt="Punky Cuts Banner">
+                        <div class="card-img-overlay">
+                            <div class="btn-group float-end" id="btngroup" role="group" aria-label="Account and Cart">
+                                <div class="btn-group {% if user.is_authenticated %} account {% endif %}">
+                                    {% if user.is_authenticated %}
+                                    <button class="btn btn-dark dropdown-toggle shadow-sm" id="accountDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Account
+                                    </button>
+                                    {% else %}
+                                    <a class="btn btn-dark shadow-sm" href="{% url 'login' %}" id="loginBtn" role="button">Log In</a>
+                                    {% endif %}
+                                    <ul class="dropdown-menu" aria-labelledby="accountDropdown">
+                                        <li><a class="dropdown-item" href="messages/inbox">Messages</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'profile' %}">Settings</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
+                                    </ul>
+                                </div>
+                                <button type="button" class="btn btn-dark shadow-sm" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">Cart</button>
+                            </div>
+                            <a href="/" title="Home" class="stretched-link"></a>
+                        </div>
+                    </div>
+                    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+                        <div class="container-fluid">
+                            <div class="navbar-brand d-lg-none">Punky Cuts</div>
+                            <button class="navbar-toggler type="button" data-bs-toggle="collapse" data-bs-target="#navbarGlobal">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse justify-content-center" id="navbarGlobal">
+                                <ul class="navbar-nav">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">New Arrivals</a>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="navbardropSeasonal" role="button" data-bs-toggle="dropdown" aria-expanded="false">Seasonal</a>
+                                        <ul class="dropdown-menu" aria-labelledby="navbardropSeasonal">
+                                            <li><a class="dropdown-item" href="#">Cicadas</a></li>
+                                            <li><a class="dropdown-item" href="#">Fall</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="navbardropOccasions" role="button" data-bs-toggle="dropdown" aria-expanded="false">Occasions</a>
+                                        <ul class="dropdown-menu" aria-labelledby="navbardropOccasions">
+                                            <li><a class="dropdown-item" href="#">Baby Shower</a></li>
+                                            <li><a class="dropdown-item" href="#">Birthday</a></li>
+                                            <li><a class="dropdown-item" href="#">Wedding</a></li>
+                                        </ul>                               
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">All Products</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/customize">Customize</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">About Us</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">Gallery</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">Support Local Business</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">Contact Us</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+                {% for message in messages %}
+                    <div class="toast notification bg-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
+                        <div class="toast-header">
+                        <strong class="mr-auto">
+                            {% if message.tags == 'error' %}
+                            <i class="fas fa-times mr-2"></i>
+                            {% elif message.tags == 'warning' %}
+                            <i class="fas fa-exclamation mr-2"></i>
+                            {% elif message.tags == 'info' %}
+                            <i class="fas fa-info mr-2"></i>
+                            {% elif message.tags == 'success' %}
+                            <i class="fas fa-check mr-2"></i>
+                            {% endif %}
+                            {{message.tags|capfirst}}
+                        </strong>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="toast-body">
+                        {{message|safe}}
+                        </div>
+                    </div>
+                {% endfor %}
+            </header>
+            <main>
+                <div class="content-container container">
+                    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+                        <div class="offcanvas-header">
+                            <h5 class="mx-auto" id="cartOffcanvasLabel">Shopping Cart</h5>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <div class="row">
+                                <div class="col-12 d-flex justify-content-center">
+                                    You <br><br><br>don't<br> have <br><br><br><br><br><br><br><br>items in 
+                                    <br><br><br><br><br><br><br><br><br><br>your cart yet.
+                                    <br><br><br><br><br><br><br><br><br><br><br><br><br> Add some!
+                                </div>
+                            </div>
+                        </div>
+                        <div class="offcanvas-footer my-3 center-block">
+                            <div class="col-12 d-flex justify-content-center">
+                                <button class=" mx-auto btn btn-dark shadow-sm">Checkout</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% block postman_menu %}
+
+                    {% endblock %}
+                    {% block content %}
+
+                    {% endblock %} 
+
+                </div>
+
+            </main>
+            <footer class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <hr><p class="text-center fs-6">&copy; Punky Cuts & her amazing dev team Punky Codes</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        {% if messages %}
+            <script>
+                {% for message in messages %}
+                    $(document).ready(function () {
+                        $('.toast').toast('show');
+                    });
+                {% endfor %}
+            </script>
+        {% endif %}
+    </body>
+</html>

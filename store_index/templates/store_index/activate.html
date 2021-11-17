@@ -1,0 +1,11 @@
+{% autoescape off %}
+
+    Hi {{ user.username }}!
+
+    Thanks for signing up, {{customer.FirstName}}. Just one more step to unlock full access to Punky Cuts!
+    
+    Please use the link below to verify your account.
+
+    https://{{domain}}{% url 'activate' uidb64=uid token=token %}
+
+{% endautoescape %}

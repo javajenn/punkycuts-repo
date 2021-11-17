@@ -1,0 +1,111 @@
+{% extends "store_index/base.html" %}
+{% load static %}
+{% load store_extras %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="data:,">
+        
+        
+        {% block head %}
+        <title>Sign Up</title>
+        <style>
+        input[type] {
+            width:94%;
+        }
+        a.help {
+            font-size: large;
+        }
+        </style>
+        {% endblock %}
+
+    </head>
+    <body>
+    {% block content %}
+
+        <div class="container mt-3">
+            <div class="row justify-content-center border">
+                <div class="col-12 d-flex justify-content-center">
+                    <form method="POST" class="col-6 col-md-4 col-lg-3 col-xl-3" action="" %}">
+                        {% csrf_token %}
+                        <div class="fieldWrapper">
+                            {{ customer_form.Email.errors }}
+                            <label class="fieldLabel" data-bs-placement="top" for="{{ customer_form.Email.id_for_label }}">Email: </label>
+                            <div class="field">
+                                {{ customer_form.Email }}
+                                {% if customer_form.Email.help_text %}
+                                    <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.Email.help_text|safe }}">?</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="fieldWrapper">
+                            {{ user_form.username.errors }}
+                            <label class="fieldLabel" data-bs-placement="top" for="{{ user_form.username.id_for_label }}">Username: </label>
+                            <div class="field">
+                                {{ user_form.username }}
+                                {% if user_form.username.help_text %}
+                                    <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ user_form.username.help_text|safe }}">?</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="fieldWrapper">
+                            {{ user_form.password1.errors }}
+                            <label class="fieldLabel" data-bs-placement="top" for="{{ user_form.password1.id_for_label }}">Password: </label>
+                            <div class="field">
+                                {{ user_form.password1 }}
+                                {% if user_form.password1.help_text %}
+                                    <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" data-bs-html="true" title="{{ user_form.password1.help_text|safe }}">?</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="fieldWrapper">
+                            {{ user_form.password2.errors }}
+                            <label class="fieldLabel" data-bs-placement="top" for="{{ user_form.password2.id_for_label }}">Confirm Password: </label>
+                            <div class="field">
+                                {{ user_form.password2 }}
+                                {% if user_form.password2.help_text %}
+                                    <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ user_form.password2.help_text|safe }}">?</a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        
+                        <div class="fieldWrapper">
+                            {{ customer_form.FirstName.errors }}
+                            <label class="fieldLabel" data-bs-placement="top" for="{{ customer_form.FirstName.id_for_label }}">First Name: </label>
+                            <div class="field">
+                                {{ customer_form.FirstName }}
+                                {% if customer_form.FirstName.help_text %}
+                                    <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.FirstName.help_text|safe }}">?</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="fieldWrapper">
+                            {{ customer_form.LastName.errors }}
+                            <label class="fieldLabel" data-bs-placement="top" for="{{ customer_form.LastName.id_for_label }}">Last Name: </label>
+                            <div class="field">
+                                {{ customer_form.LastName }}
+                                {% if customer_form.LastName.help_text %}
+                                    <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.LastName.help_text|safe }}">?</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% comment %} {% for field in customer_form %}
+                            <div class="fieldWrapper">
+                                {{ field.errors }}
+                                {{ field.label_tag }} {{ field }}
+                            </div>
+                        {% endfor %} {% endcomment %}
+                        <input class="my-3" type="submit" value="Sign Up!">
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+
+    {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,356 @@
+{% extends "store_index/base.html" %}
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="data:,">
+        
+        
+        {% block head %}
+        <title>Profile</title>
+        <style>
+            /* Style the tab */
+            .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            display: flex;
+            justify-content: center;
+            }
+
+            /* Style the buttons inside the tab */
+            .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+            }
+
+            /* Change background color of buttons on hover */
+            .tab button:hover {
+            background-color: #ddd;
+            }
+
+            /* Create an active/current tablink class */
+            .tab button.active {
+            background-color: #ccc;
+            }
+
+            /* Style the tab content */
+            .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+            width: inherit;
+            -webkit-animation: fadeEffect 1s;
+            }
+            /* Fade in tabs */
+            @-webkit-keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+            }
+
+            @keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+            }
+        </style>
+        {% endblock %}
+
+    </head>
+    <body>
+    {% block content %}
+
+        <div class="container mt-3">
+            <div class="row justify-content-center">
+                {% if request.method == "POST" %}
+                    {% if user_form.errors or customer_form.errors %}
+                        <div class="w-50 alert alert-danger alert-dismissible fade show" role="alert">
+                            Error submitting update. Please try again.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% else %}
+                        <div class="w-50 alert alert-success alert-dismissible fade show" role="alert">
+                            Profile updated!
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                <div class="col-8 d-flex flex-column justify-content-center">
+                    <div class="tab text-center">
+                        <button id="viewBtn" class="tablinks" onclick="openTab(event, 'View')">View</button>
+                        <button id="updateBtn" class="tablinks" onclick="openTab(event, 'Update')">Update</button>
+                    </div>
+                    <div class="w-100 d-flex text-center justify-content-center">
+                    <div id="View" class="tabcontent">
+                        <form>
+                            <h5>Personal Info:</h5>
+                            <div class="field">
+                                <label for="Email">Email:</label>
+                                <input name="Email" type="email" value="{{ customer.Email }}" disabled>
+                            </div>   
+                            <div class="field">
+                                <label for="Username">Username:</label>
+                                <input name="Username" type="text" value="{{ user }}" disabled>
+                            </div>  
+                            <div class="field">
+                                <label for="Password">Password:</label>
+                                <input name="Password" type="password" value="*************" disabled>
+                            </div>
+                            <div class="field">
+                                <label for="FirstName">First Name:</label>
+                                <input name="FirstName" type="text" value="{{ customer.FirstName }}" disabled>
+                            </div>
+                            <div class="field">
+                                <label for="LastName">Last Name:</label>
+                                <input name="LastName" type="text" value="{{ customer.LastName }}" disabled>
+                            </div>
+                            <div class="field">
+                                <label for="PhoneNumber">Phone Number:</label>
+                                <input name="PhoneNumber" type="text" value="{{ customer.PhoneNumber }}" disabled>
+                            </div>     
+                            <h5>Shipping Address:</h5>
+                            <div class="field">
+                                <label for="ShippingAddress">Address:</label>
+                                <input name="ShippingAddress" type="text" value="{{ customer.ShippingAddress }}" disabled>
+                            </div>
+                            <div class="field">
+                                <label for="ShippingCity">City:</label>
+                                <input name="ShippingCity" type="text" value="{{ customer.ShippingCity }}" disabled>
+                            </div>
+                            <div class="field">
+                                <label for="ShippingZipCode">Zip Code:</label>
+                                <input name="ShippingZipCode" type="text" value="{{ customer.ShippingZipCode }}" disabled>
+                            </div>
+                            <div class="field">
+                                <label for="ShippingState">State:</label>
+                                <input name="ShippingState" type="text" value="{{ customer.ShippingState }}" disabled>
+                            </div>  
+                            <h5>Billing Address:</h5>
+                            <div class="field">
+                                <label for="BillingAddress">Address:</label>
+                                <input name="BillingAddress" type="text" value="{{ customer.BillingAddress }}" disabled>
+                            </div>
+                            <div class="field">
+                                <label for="BillingCity">City:</label>
+                                <input name="BillingCity" type="text" value="{{ customer.BillingCity }}" disabled>
+                            </div>
+                            <div class="field">
+                                <label for="BillingZipCode">Zip Code:</label>
+                                <input name="BillingZipCode" type="text" value="{{ customer.BillingZipCode }}" disabled>
+                            </div>
+                            <div class="field">
+                                <label for="BillingState">State:</label>
+                                <input name="BillingState" type="text" value="{{ customer.BillingState }}" disabled>
+                            </div>  
+                        </form>
+                    </div>
+                    <div id="Update" class="tabcontent">
+                        <form method="POST" id="UpdateForm">
+                            {% csrf_token %}
+                            <h5>Personal Info:</h5>
+                            <div class="fieldWrapper">
+                                {{ customer_form.Email.errors }}
+                                <label class="fieldLabel" for="{{ customer_form.Email.id_for_label }}">Email: </label>
+                                <div class="field d-inline">
+                                    {{ customer_form.Email }}
+                                    {% if customer_form.Email.help_text %}
+                                        <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.Email.help_text|safe }}">?</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ user_form.username.errors }}
+                                <label class="fieldLabel" for="{{ user_form.username.id_for_label }}">Username: </label>
+                                <div class="field d-inline">
+                                    {{ user_form.username }}
+                                    {% if user_form.username.help_text %}
+                                        <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ user_form.username.help_text|safe }}">?</a>
+                                    {% endif %}
+                                </div>
+                            </div>  
+                            <div class="field">
+                                <label for="Password">Password:</label>
+                                <input name="Password" type="password" value="*************">
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ customer_form.FirstName.errors }}
+                                <label class="fieldLabel" for="{{ customer_form.FirstName.id_for_label }}">First Name: </label>
+                                <div class="field d-inline">
+                                    {{ customer_form.FirstName }}
+                                    {% if customer_form.FirstName.help_text %}
+                                        <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.FirstName.help_text|safe }}">?</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ customer_form.LastName.errors }}
+                                <label class="fieldLabel" for="{{ customer_form.LastName.id_for_label }}">Last Name: </label>
+                                <div class="field d-inline">
+                                    {{ customer_form.LastName }}
+                                    {% if customer_form.LastName.help_text %}
+                                        <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.LastName.help_text|safe }}">?</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ customer_form.PhoneNumber.errors }}
+                                <label class="fieldLabel" for="{{ customer_form.PhoneNumber.id_for_label }}">Phone Number: </label>
+                                <div class="field d-inline">
+                                    {% comment %} <input type="text" id="phoneNum" onblur="phoneNumberFormatter()" value="{{ customer_form.PhoneNumber.value }}"> {% endcomment %}
+                                    {{ customer_form.PhoneNumber }}
+                                    {% if customer_form.PhoneNumber.help_text %}
+                                        <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.PhoneNumber.help_text|safe }}">?</a>
+                                    {% endif %}
+                                </div>
+                            </div>    
+                            <h5>Shipping Address:</h5>
+                            <div class="fieldWrapper">
+                                {{ customer_form.ShippingAddress.errors }}
+                                <label class="fieldLabel" for="{{ customer_form.ShippingAddress.id_for_label }}">Address: </label>
+                                <div class="field d-inline">
+                                    {{ customer_form.ShippingAddress }}
+                                    {% if customer_form.ShippingAddress.help_text %}
+                                        <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.ShippingAddress.help_text|safe }}">?</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ customer_form.ShippingCity.errors }}
+                                <label class="fieldLabel" for="{{ customer_form.ShippingCity.id_for_label }}">City: </label>
+                                <div class="field d-inline">
+                                    {{ customer_form.ShippingCity }}
+                                    {% if customer_form.ShippingCity.help_text %}
+                                        <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.ShippingCity.help_text|safe }}">?</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ customer_form.ShippingZipCode.errors }}
+                                <label class="fieldLabel" for="{{ customer_form.ShippingZipCode.id_for_label }}">Zip Code: </label>
+                                <div class="field d-inline">
+                                    {{ customer_form.ShippingZipCode }}
+                                    {% if customer_form.ShippingZipCode.help_text %}
+                                        <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.ShippingZipCode.help_text|safe }}">?</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ customer_form.ShippingState.errors }}
+                                <label class="fieldLabel" for="{{ customer_form.ShippingState.id_for_label }}">State: </label>
+                                <div class="field d-inline">
+                                    {{ customer_form.ShippingState }}
+                                    {% if customer_form.ShippingState.help_text %}
+                                        <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.ShippingState.help_text|safe }}">?</a>
+                                    {% endif %}
+                                </div>
+                            </div>  
+                            <h5>Billing Address:</h5>
+                            <div class="fieldWrapper">
+                                {{ customer_form.BillingAddress.errors }}
+                                <label class="fieldLabel" for="{{ customer_form.BillingAddress.id_for_label }}">Address: </label>
+                                <div class="field d-inline">
+                                    {{ customer_form.BillingAddress }}
+                                    {% if customer_form.BillingAddress.help_text %}
+                                        <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.BillingAddress.help_text|safe }}">?</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ customer_form.BillingCity.errors }}
+                                <label class="fieldLabel" for="{{ customer_form.BillingCity.id_for_label }}">City: </label>
+                                <div class="field d-inline">
+                                    {{ customer_form.BillingCity }}
+                                    {% if customer_form.BillingCity.help_text %}
+                                        <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.BillingCity.help_text|safe }}">?</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ customer_form.BillingZipCode.errors }}
+                                <label class="fieldLabel" for="{{ customer_form.BillingZipCode.id_for_label }}">Zip Code: </label>
+                                <div class="field d-inline">
+                                    {{ customer_form.BillingZipCode }}
+                                    {% if customer_form.BillingZipCode.help_text %}
+                                        <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.BillingZipCode.help_text|safe }}">?</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ customer_form.BillingState.errors }}
+                                <label class="fieldLabel" for="{{ customer_form.BillingState.id_for_label }}">State: </label>
+                                <div class="field d-inline">
+                                    {{ customer_form.BillingState }}
+                                    {% if customer_form.BillingState.help_text %}
+                                        <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.BillingState.help_text|safe }}">?</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <input type="submit">  
+                        </form>
+                    </div>
+                    </div>
+                  {% comment %} <form method="POST">
+                    <div class="field">
+                        <label for="Email">Email:</label>
+                        <input type="email" value="{{ customer.Email }}">
+                    </div>   
+                    <div class="field">
+                        <label for="Username">Username:</label>
+                        <input type="text" value="{{ user }}">
+                    </div>                 
+                  </form> {% endcomment %}
+                </div>
+            </div>
+        </div>
+        <script>
+            function openTab(event, action) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i=0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i=0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(action).style.display="block";
+                event.currentTarget.className += " active";
+            }
+            {% if request.method == "POST" %}
+                {% if user_form.errors or customer_form.errors %}
+                    document.getElementById("updateBtn").click();
+                {% else %}
+                    document.getElementById("viewBtn").click();
+                {% endif %}
+            {% else %}
+                document.getElementById("viewBtn").click();
+            {% endif %}
+        </script>
+        <script>
+            function phoneNumberFormatter() {
+                const inputField = document.getElementById("phoneNum");
+                const formattedInputValue = formatPhoneNumber(inputField.value);
+                inputField.value = formattedInputValue;
+            }
+            function formatPhoneNumber(value) {
+                if (!value) return value;
+                const phoneNumber = value.replace(/[^\d]/g, "");
+                length = phoneNumber.length;
+                if (length < 3) return phoneNumber;
+                if (length < 7) {
+                    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+                }
+                return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3,6)}-${phoneNumber.slice(6, 10)}`;
+            }
+        </script>
+    {% endblock %}
+    </body>
+</html>
