@@ -23,6 +23,7 @@ from django.conf import settings
 import threading
 from twilio.rest import Client 
 from twilio.twiml.messaging_response import MessagingResponse
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def index(request):
@@ -113,11 +114,10 @@ def profile(request):
     }
     return render(request, 'store_index/profile.html', context)
 
+@csrf_exempt
 def handle_sms(request):
-    if request.method == 'POST':
-        body = request.values.get('Body', None)
-        resp = MessagingResponse()
-        resp.message('We have received your message. The admin will be in touch shortly.')
+    resp = MessagingResponse()
+    resp.message('We have received your message. The admin will be in touch shortly.')
 
     return HttpResponse(str(resp))
 
