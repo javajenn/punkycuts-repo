@@ -119,7 +119,7 @@ def handle_sms(request):
         resp = MessagingResponse()
         resp.message('We have received your message. The admin will be in touch shortly.')
 
-    return HttpResponse('hi')
+    return HttpResponse(str(resp))
 
 class CustomerDetail(generic.DetailView):
     model = Customer
