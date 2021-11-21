@@ -272,7 +272,7 @@ class WriteView(ComposeMixin, FormView):
         if self.request.method == 'POST':
             _mutable = kwargs['data']._mutable
             kwargs['data']._mutable = True
-            kwargs['data']['recipient'] = User.objects.get(username="jenni")
+            kwargs['data']['recipient'] = User.objects.get(username="punky")
             kwargs['data']._mutable = _mutable
         if isinstance(self.autocomplete_channels, tuple) and len(self.autocomplete_channels) == 2:
             channel = self.autocomplete_channels[1 if self.request.user.is_anonymous else 0]
@@ -280,10 +280,6 @@ class WriteView(ComposeMixin, FormView):
             channel = self.autocomplete_channels
         kwargs['channel'] = channel
         return kwargs
-
-    # def form_valid(self, form):
-    #     form.instance.recipients = User.objects.get(username="jenni")
-    #     return super()
 
 class ReplyView(ComposeMixin, FormView):
     """

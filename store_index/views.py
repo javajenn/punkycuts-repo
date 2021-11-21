@@ -24,6 +24,7 @@ import threading
 from twilio.rest import Client 
 from twilio.twiml.messaging_response import MessagingResponse
 from django.views.decorators.csrf import csrf_exempt
+from postman.forms import WriteForm
 
 # Create your views here.
 def index(request):
@@ -116,10 +117,21 @@ def profile(request):
 
 @csrf_exempt
 def handle_sms(request):
-    resp = MessagingResponse()
-    resp.message('We have received your message. The admin will be in touch shortly.')
 
-    return HttpResponse(str(resp))
+    def sms_to_msg(msg):
+        #TO DO - need to pass this to write view or something using user phone number and body and yeah
+        form = WriteForm()
+        form.subject = 'SMS message'
+        form.body = msg
+        form.save()
+
+    msg = request.values.get('Body', None)
+    sms_to_msg(msg)
+    
+    response = MessagingResponse()
+    response.message('We have received your message. The admin will be in touch shortly.')
+
+    return HttpResponse(str(response))
 
 class CustomerDetail(generic.DetailView):
     model = Customer

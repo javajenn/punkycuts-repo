@@ -110,7 +110,7 @@ class BaseWriteForm(forms.ModelForm):
         """
         recipients = self.cleaned_data.get('recipients', [])
         if not recipients and not recipient:
-            recipient = User.objects.get(username="jenni")
+            recipient = User.objects.get(username="punky")
         if parent and not parent.thread_id:  # at the very first reply, make it a conversation
             parent.thread = parent
             parent.save()
