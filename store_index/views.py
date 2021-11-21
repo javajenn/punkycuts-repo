@@ -114,9 +114,10 @@ def profile(request):
     return render(request, 'store_index/profile.html', context)
 
 def handle_sms(request):
-    body = request.values.get('Body', None)
-    resp = MessagingResponse()
-    resp.message('We have received your message. The admin will be in touch shortly.')
+    if request.method == 'POST':
+        body = request.values.get('Body', None)
+        resp = MessagingResponse()
+        resp.message('We have received your message. The admin will be in touch shortly.')
 
     return HttpResponse('hi')
 
