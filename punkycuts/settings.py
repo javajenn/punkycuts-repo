@@ -128,21 +128,18 @@ WSGI_APPLICATION = 'punkycuts.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+#prod VV
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'punky_cuts_db',
-        'USER': 'root',
-        'PASSWORD': '06911',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-        },
-        'TEST': {
-            'NAME': 'test_db'
-        }
+        'NAME': 'punkycuts$punky_cuts_db',
+        'USER': 'punkycuts',
+        'PASSWORD': 'database',
+        'HOST': 'punkycuts.mysql.pythonanywhere-services.com',
+    },
+    'TEST': {
+        'NAME': '<your username>$test_<your database name>', 
     }
 }
 # Password validation
