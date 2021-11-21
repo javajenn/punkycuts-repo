@@ -9,5 +9,5 @@ urlpatterns = [
     path('customers/', views.CustomerListView.as_view(), name='customers'),
     path('signup/', views.signup, name='signup'),
     path('activate/<uidb64>/<token>', views.activate_user, name='activate'),
-    path('sms/', views.handle_sms, name="sendsms")
+    path('api/sms/', views.handle_sms, name="sendsms")
 ]
