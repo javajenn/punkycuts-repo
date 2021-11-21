@@ -1,4 +1,5 @@
 {% load static %}
+{% load postman_tags %}
 <!doctype html>
 <html lang="en">
     <head>
@@ -84,7 +85,8 @@
                                     <a class="btn btn-dark shadow-sm" href="{% url 'login' %}" id="loginBtn" role="button">Log In</a>
                                     {% endif %}
                                     <ul class="dropdown-menu" aria-labelledby="accountDropdown">
-                                        <li><a class="dropdown-item" href="messages/inbox">Messages</a></li>
+                                        {% postman_unread as unread_count %}
+                                        <li><a class="dropdown-item" href="messages/inbox">Messages{% if unread_count %} <strong>({{ unread_count }})</strong>{% endif %}</a></li>
                                         <li><a class="dropdown-item" href="{% url 'profile' %}">Settings</a></li>
                                         <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
                                     </ul>

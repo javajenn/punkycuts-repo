@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
 from django.http import Http404
@@ -268,6 +269,11 @@ class WriteView(ComposeMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+        if self.request.method == 'POST':
+            _mutable = kwargs['data']._mutable
+            kwargs['data']._mutable = True
+            kwargs['data']['recipient'] = User.objects.get(username="jenni")
+            kwargs['data']._mutable = _mutable
         if isinstance(self.autocomplete_channels, tuple) and len(self.autocomplete_channels) == 2:
             channel = self.autocomplete_channels[1 if self.request.user.is_anonymous else 0]
         else:
@@ -275,6 +281,9 @@ class WriteView(ComposeMixin, FormView):
         kwargs['channel'] = channel
         return kwargs
 
+    # def form_valid(self, form):
+    #     form.instance.recipients = User.objects.get(username="jenni")
+    #     return super()
 
 class ReplyView(ComposeMixin, FormView):
     """

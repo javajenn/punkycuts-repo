@@ -1,5 +1,6 @@
 from typing import Any, Dict
 from django.contrib import messages
+from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 import requests, json
 # from rest_framework.generics import CreateAPIView
@@ -19,6 +20,9 @@ from django.utils.encoding import force_bytes, force_str, force_text, DjangoUnic
 from .tokens import generate_token
 from django.core.mail import EmailMessage
 from django.conf import settings
+import threading
+from twilio.rest import Client 
+from twilio.twiml.messaging_response import MessagingResponse
 
 # Create your views here.
 def index(request):
@@ -41,7 +45,10 @@ def index(request):
         );
 
         #response = requests.get("https://randomuser.me/api/")
-        response = requests.get('https://app.zipcodebase.com/api/v1/distance', headers=headers, params=params);
+        try:
+            response = requests.get('https://app.zipcodebase.com/api/v1/distance', headers=headers, params=params);
+        except requests.exceptions.ConnectionError:
+            messages.add_message(messages.ERROR, 'Error connecting to zipcode service. Be aware we only ship to Cincinnati and some surrounding regions.')
         if response.status_code == 200:
             content = json.loads(response.text)
             results = content['results']
@@ -106,6 +113,13 @@ def profile(request):
     }
     return render(request, 'store_index/profile.html', context)
 
+def handle_sms(request):
+    body = request.values.get('Body', None)
+    resp = MessagingResponse()
+    resp.message('We have received your message. The admin will be in touch shortly.')
+
+    return HttpResponse('hi')
+
 class CustomerDetail(generic.DetailView):
     model = Customer
     template_name='store_index/profile.html'
@@ -115,19 +129,29 @@ class CustomerDetail(generic.DetailView):
         context['user'] = self.request.user
         return context
 
+class EmailThread(threading.Thread):
+
+    def __init__(self, email):
+        self.email = email
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self.email.send()
+
 def send_verify_email(user, request, customer):
     current_site = get_current_site(request)
     email_subject = 'Activate your account!'
     email_body = render_to_string('store_index/activate.html', {
         'user': user,
         'customer': customer,
-        'domain': current_site,
+        'domain': current_site.domain,
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': generate_token.make_token(user)
     })
 
     email = EmailMessage(subject=email_subject, body=email_body, from_email=settings.EMAIL_FROM_USER, to=[user.email])
-    email.send()
+    
+    EmailThread(email).start()
 
 def activate_user(request, uidb64, token):
     try:
@@ -173,7 +197,7 @@ def signup(request):
                 login(request, new_user)
                 send_verify_email(new_user, request, customer)
                 messages.add_message(request, messages.SUCCESS, 'Thank you for signing up! ')
-                return redirect('index')
+                return redirect('index')#, {'customer': customer, 'user': new_user})
 
 # What I'm thinking:
 #   Create form for saving user email and just also save it to that!! See if there's already oform for this....

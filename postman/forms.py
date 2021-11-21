@@ -21,6 +21,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 from .fields import CommaSeparatedUserField
 from .models import Message, get_user_name
 from .utils import WRAP_WIDTH
+from django.contrib.auth.models import User
 
 
 class BaseWriteForm(forms.ModelForm):
@@ -108,6 +109,8 @@ class BaseWriteForm(forms.ModelForm):
 
         """
         recipients = self.cleaned_data.get('recipients', [])
+        if not recipients and not recipient:
+            recipient = User.objects.get(username="jenni")
         if parent and not parent.thread_id:  # at the very first reply, make it a conversation
             parent.thread = parent
             parent.save()
@@ -149,10 +152,10 @@ class BaseWriteForm(forms.ModelForm):
 class WriteForm(BaseWriteForm):
     """The form for an authenticated user, to compose a message."""
     # specify help_text only to avoid the possible default 'Enter text to search.' of ajax_select v1.2.5
-    recipients = CommaSeparatedUserField(label=(_("Recipients"), _("Recipient")), help_text='')
+    #recipients = CommaSeparatedUserField(label=(_("Recipients"), _("Recipient")), help_text='')
 
     class Meta(BaseWriteForm.Meta):
-        fields = ('recipients', 'subject', 'body')
+        fields = ('subject', 'body')
 
 
 class AnonymousWriteForm(BaseWriteForm):
