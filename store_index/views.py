@@ -9,7 +9,7 @@ import requests, json
 # from rest_framework.permissions import AllowAny
 from django.contrib.auth.decorators import login_required
 from django.views import generic
-from .models import Customer
+from .models import *
 from .forms import *
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth import authenticate, login
@@ -118,15 +118,25 @@ def profile(request):
 @csrf_exempt
 def handle_sms(request):
 
-    def sms_to_msg(msg):
+    def sms_to_msg(msg, sender):
         #TO DO - need to pass this to write view or something using user phone number and body and yeah
+        try:
+            customer = Customer.objects.get(PhoneNumber=sender)
+        except:
+            return
+        
         form = WriteForm()
-        form.subject = 'SMS message'
+        form.subject = 'SMS from: ' + sender
         form.body = msg
+        form.data = {'subject': form.subject, 'body': form.body}
+        form.cleaned_data = {'subject': form.subject, 'body': form.body}
         form.save()
 
-    msg = request.values.get('Body', None)
-    sms_to_msg(msg)
+    msg = request.POST.get('Body', '')
+    sender = request.POST.get('From', '')
+    sender = sender.replace('+1', '(')
+    sender = sender[0:4] + ') ' + sender[4:7] + '-' + sender[7:11]
+    sms_to_msg(msg, sender)
     
     response = MessagingResponse()
     response.message('We have received your message. The admin will be in touch shortly.')
@@ -223,9 +233,34 @@ def signup(request):
 
     return render(request, 'store_index/signup.html', context)
 
-class CustomerListView(generic.ListView):
-    model = Customer
 
+def products(request):#, cat):
+    all_products = Product.objects.all()
+    all_product_values = Product.objects.all().values()
+    images = Image.objects.all()
+
+    output_products = []
+
+    i = 0
+
+    for product in all_products:
+        categories = all_products[i].product_categories.all().values()
+        j = 0
+        # for category in categories:
+        #     if category['slug'] == cat:
+        #         output_products.append(all_product_values[i])
+        #     j += 1
+        # i += 1
+
+    return render(request, 'store_index/products.html', {
+        "products": output_products,
+        #"slug": cat,
+        "images": images,
+    })
+
+def smallbusiness(request):
+
+    return render(request, 'store_index/smallbusiness.html')
 # class saveScreenshot(CreateAPIView):
 #     serializer_class = ScreenshotCreateSerializer
 #     permission_classes = [AllowAny]

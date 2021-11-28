@@ -10,21 +10,30 @@
             {% block title %}
             Customize
         </title>
-        <script type="text/javascript" src="{% static '/html2canvas.min.js' %}">
+        <script type="text/javascript" src="{% static 'js/fabric.js' %}">
         </script>
-        <script type="text/javascript" src="{% static '/scripts.js' %}"></script>
-        <style>
+        <!--<script src="https://rawgit.com/fabricjs/fabric.js/master/dist/fabric.js"></script>
+        --><style>
         .drpspc {
             height: 50vh;
             width: 50vh;
-        }
-        .drop_shirt {
-            height: 50vh;   
-            width: 50vh;
-            border: 1px solid black;
+            position: relative;
         }
         img {
             object-fit: contain;
+        }
+        #images a img {
+            width: 150px;
+            height: 150px;
+        }
+        .active {
+            color: #c4c3d0!important;
+        }
+        #filters {
+            background-color: rgb(255, 255, 255, .6);
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid black;
         }
         </style>
         {% endblock %}
@@ -37,103 +46,14 @@
         <div class="container" style="overflow-x: scroll; max-height:30vh;">
             <div class="row d-flex justify-content-center">
                 <div class="col-12">
-                    <div class="d-inline-flex align-items-center justify-content-center">
-                        <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img id="img_dragg" name="drag_img" class="draggable img-fluid" width="150px" height="150px" src="{% static '/design_hotcicadasummer.png' %}" alt="Card image">
-                                <pre>hot cicada summer</pre>
-                            </div>
-                        </div>
-                         <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_prettyandpowerful.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>pretty and powerful</pre>
-                            </div>
-                        </div>
-                        <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_onlyinnorthside.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>only in northside</pre>
-                            </div>
-                        </div>
-                        <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_ididntask.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>i didn't ask</pre>
-                            </div>
-                        </div>
-                        <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_hotcicadasummer.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>hot cicada summer</pre>
-                            </div>
-                        </div>
-                         <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_prettyandpowerful.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>pretty and powerful</pre>
-                            </div>
-                        </div>
-                        <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_onlyinnorthside.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>only in northside</pre>
-                            </div>
-                        </div>
-                        <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_ididntask.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>i didn't ask</pre>
-                            </div>
-                        </div>
-                        <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_hotcicadasummer.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>hot cicada summer</pre>
-                            </div>
-                        </div>
-                         <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_prettyandpowerful.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>pretty and powerful</pre>
-                            </div>
-                        </div>
-                        <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_onlyinnorthside.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>only in northside</pre>
-                            </div>
-                        </div>
-                        <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_ididntask.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>i didn't ask</pre>
-                            </div>
-                        </div>
-                        <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_hotcicadasummer.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>hot cicada summer</pre>
-                            </div>
-                        </div>
-                         <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_prettyandpowerful.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>pretty and powerful</pre>
-                            </div>
-                        </div>
-                        <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_onlyinnorthside.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>only in northside</pre>
-                            </div>
-                        </div>
-                        <div class="design-container mx-2 d-inline-flex justify-content-center">
-                            <div class="text-center">
-                                <img draggable="true" name="drag_img" class="img-fluid" width="150px" height="150px" src="{% static '/design_ididntask.png' %}" ondragstart="drag(event)" alt="Card image">
-                                <pre>i didn't ask</pre>
-                            </div>
-                        </div>
+                    <div id="images" class="d-inline-flex align-items-center justify-content-center">
+                        <a onclick="addImgToCanvas(1)"><img id="design1" src="{% static '/design_hotcicadasummer.png' %}"><pre class="d-flex justify-content-center">hot cicada summer</pre></a>
+                        <a onclick="addImgToCanvas(2)"><img id="design2" src="{% static '/design_ididntask.png' %}"><pre class="d-flex justify-content-center">i didn't ask.</pre></a>
+                        <a onclick="addImgToCanvas(3)"><img id="design3" src="{% static '/design_prettyandpowerful.png' %}"><pre class="d-flex justify-content-center">pretty + powerful</pre></a>
+                        <a onclick="addImgToCanvas(4)"><img id="design4" src="{% static '/design_onlyinnorthside.png' %}"><pre class="d-flex justify-content-center">only in northside</pre></a>
+                        <a onclick="addImgToCanvas(5)"><img id="design5" src="{% static '/design_thatmamahustle.png' %}"><pre class="d-flex justify-content-center">that mama hustle</pre></a>
+                        <a onclick="addImgToCanvas(6)"><img id="design6" src="{% static '/design_dadfuel.png' %}"><pre class="d-flex justify-content-center">dad fuel</pre></a>
+                        <a onclick="addTextToCanvas()"><img id="addText" src=""><pre class="d-flex justify-content-center">add your own text!</pre></a>
                     </div>
                 </div>
             </div>
@@ -142,150 +62,281 @@
         <div class="container d-flex flex-column">
             <div class="row">
                 <div class="col-12 d-flex justify-content-center">
-                    <div class="my-3 btn-group" role="group">
-                        <button type="button" class="btn btn-dark">Shirt</button>
-                        <button type="button" class="btn btn-dark">Mug</button>
-                        <button type="button" class="btn btn-dark">Water Bottle</button>
+                    <div class="my-3 btn-group itemGroup" role="group">
+                        <button type="button" id="shirtBtn" class="btn btn-dark shadow-sm" onclick="setBgImg('shirt', event)">Shirt</button>
+                        <button type="button" id="mugBtn" class="btn btn-dark shadow-sm" onclick="setBgImg('mug', event)">Mug</button>
+                        <button type="button" id="waterBottleBtn" class="btn btn-dark shadow-sm" onclick="setBgImg('waterbottle', event)">Water Bottle</button>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-12 d-flex justify-content-center">
-                    <div id="section_to_capture" class="drpspc">
-                        <div class="drop_shirt d-flex justify-content-center">
+                    <div class="drpspc" id="drpspc">
+                        <canvas id="canvas" class="border" width="468px" height="468px" ></canvas>
+
+                        {% comment %} <div class="drop_shirt d-flex justify-content-center">
                             <img class="img-fluid h-100" src="{% static '/drop_shirt.png' %}">
-                        </div>
-                        <div class="d-none drop_mug d-flex justify-content-center">
-                            <img class="img-fluid h-100" src="{% static '/drop_shirt.png' %}">
-                        </div>
+                        </div> {% endcomment %}
+                    </div>
+                    <div class="position-absolute float-end mt-2 mx-auto d-none" style="" id="filters">
+                        <label class="d-block">Change Color: <input type="checkbox" id="blend"></label>
+                        <label class="d-block">Color: <input type="color" value="#D27830" id="blend-color"></label>
                     </div>
                 </div>
             </div>
-            <div class="row"> 
-                {% csrf_token %}
-                <button type="button" id="submit" class="btn btn-primary">Save Screenshot</button>
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    {% csrf_token %}
+                    <button type="button" id="submit" class="btn btn-primary mt-4" onclick="saveCanvas()">Download Customization!</button>                
+                </div>
             </div>
         </div>
-
         <script>
-            let isDragging = false;
 
-            document.addEventListener('mousedown', function(event) {
-
-            let dragElement = event.target.closest('.draggable');
-
-            if (!dragElement) return;
-
-            event.preventDefault();
-
-            dragElement.ondragstart = function() {
-                return false;
-            };
-
-            let coords, shiftX, shiftY;
-
-            startDrag(dragElement, event.clientX, event.clientY);
-
-            function onMouseUp(event) {
-                finishDrag();
-            };
-
-            function onMouseMove(event) {
-                moveAt(event.clientX, event.clientY);
-            }
-
-            // on drag start:
-            //   remember the initial shift
-            //   move the element position:fixed and a direct child of body
-            function startDrag(element, clientX, clientY) {
-                if(isDragging) {
-                return;
-                }
-
-                isDragging = true;
-
-                document.addEventListener('mousemove', onMouseMove);
-                element.addEventListener('mouseup', onMouseUp);
-
-                shiftX = clientX - element.getBoundingClientRect().left;
-                shiftY = clientY - element.getBoundingClientRect().top;
-
-                element.style.position = 'fixed';
-
-                moveAt(clientX, clientY);
-            };
-
-            // switch to absolute coordinates at the end, to fix the element in the document
-            function finishDrag() {
-                if(!isDragging) {
-                return;
-                }
-
-                isDragging = false;
-
-                dragElement.style.top = parseInt(dragElement.style.top) + window.pageYOffset + 'px';
-                dragElement.style.position = 'absolute';
-
-                document.removeEventListener('mousemove', onMouseMove);
-                dragElement.removeEventListener('mouseup', onMouseUp);
-            }
-
-            function moveAt(clientX, clientY) {
-                // new window-relative coordinates
-                let newX = clientX - shiftX;
-                let newY = clientY - shiftY;
-
-                // check if the new coordinates are below the bottom window edge
-                let newBottom = newY + dragElement.offsetHeight; // new bottom
-
-                // below the window? let's scroll the page
-                if (newBottom > document.documentElement.clientHeight) {
-                // window-relative coordinate of document end
-                let docBottom = document.documentElement.getBoundingClientRect().bottom;
-
-                // scroll the document down by 10px has a problem
-                // it can scroll beyond the end of the document
-                // Math.min(how much left to the end, 10)
-                let scrollY = Math.min(docBottom - newBottom, 10);
-
-                // calculations are imprecise, there may be rounding errors that lead to scrolling up
-                // that should be impossible, fix that here
-                if (scrollY < 0) scrollY = 0;
-
-                window.scrollBy(0, scrollY);
-
-                // a swift mouse move make put the cursor beyond the document end
-                // if that happens -
-                // limit the new Y by the maximally possible (right at the bottom of the document)
-                newY = Math.min(newY, document.documentElement.clientHeight - dragElement.offsetHeight);
-                }
-
-                // check if the new coordinates are above the top window edge (similar logic)
-                if (newY < 0) {
-                // scroll up
-                let scrollY = Math.min(-newY, 10);
-                if (scrollY < 0) scrollY = 0; // check precision errors
-
-                window.scrollBy(0, -scrollY);
-                // a swift mouse move can put the cursor beyond the document start
-                newY = Math.max(newY, 0); // newY may not be below 0
-                }
-
-
-                // limit the new X within the window boundaries
-                // there's no scroll here so it's simple
-                if (newX < 0) newX = 0;
-                if (newX > document.documentElement.clientWidth - dragElement.offsetWidth) {
-                newX = document.documentElement.clientWidth - dragElement.offsetWidth;
-                }
-
-                dragElement.style.left = newX + 'px';
-                dragElement.style.top = newY + 'px';
-            }
-
+            $(document).ready(function() {
+                let canvas = document.getElementById("canvas");
+                let parent = document.getElementById("drpspc");
+                canvas.width = parent.offsetWidth;
+                canvas.height = parent.offsetHeight;
+                canvas.clientWidth = parent.offsetWidth;
+                canvas.clientHeight = parent.offsetHeight;
             });
-        </script>
 
+            function showFilter(event) {
+                filterBox = document.querySelector('#filters');
+                if (filters.classList.contains('d-none')) {
+                    filters.classList.remove('d-none');
+                }
+            }
+
+            function hideFilters() {
+                filterBox = document.querySelector('#filters');
+                filters.classList.add('d-none');
+            }
+
+            var canvas = this.__canvas = new fabric.Canvas('canvas'),
+                f = fabric.Image.filters;
+
+            canvas.on({
+                'selection:updated': handleActiveObj,
+                'selection:created': handleActiveObj,
+                'selection:cleared': hideFilters
+            });
+
+            function handleActiveObj(obj){
+                let activeObj = canvas.getActiveObject();
+                var filters = ['grayscale', 'invert', 'remove-color', 'sepia', 'brownie',
+                    'brightness', 'contrast', 'saturation', 'vibrance', 'noise', 'vintage',
+                    'pixelate', 'blur', 'sharpen', 'emboss', 'technicolor',
+                    'polaroid', 'blend-color', 'gamma', 'kodachrome',
+                    'blackwhite', 'blend-image', 'hue', 'resize'];
+                      
+                if (activeObj) {
+                    filters = document.getElementById('filters');
+                    filters.classList.remove('d-none');
+                }
+                showFilter(obj);
+            }
+            var deleteIcon = "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Ebene_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='595.275px' height='595.275px' viewBox='200 215 230 470' xml:space='preserve'%3E%3Ccircle style='fill:%23F44336;' cx='299.76' cy='439.067' r='218.516'/%3E%3Cg%3E%3Crect x='267.162' y='307.978' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -222.6202 340.6915)' style='fill:white;' width='65.545' height='262.18'/%3E%3Crect x='266.988' y='308.153' transform='matrix(0.7071 0.7071 -0.7071 0.7071 398.3889 -83.3116)' style='fill:white;' width='65.544' height='262.179'/%3E%3C/g%3E%3C/svg%3E";
+            var deleteImg = document.createElement('img');
+            deleteImg.src = deleteIcon;
+            var canvas2dBackend = new fabric.Canvas2dFilterBackend()
+            fabric.filterBackend = fabric.initFilterBackend();
+            
+
+            function saveCanvas() {
+                var dataURL = canvas.toDataURL({
+                    format: 'png'
+                });
+                downloadImg(dataURL, 'my-customization.png');
+            }
+
+            function downloadImg(data, filename) {
+                var a = document.createElement('a');
+                a.href = data;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+            }
+
+            function setBgImg(item, e) {
+                var url = 'drop_' + item + '.png';
+                url = '/static/' + url;
+                //console.log(e)
+                fabric.Image.fromURL(url, function (img) {    
+                    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+                        scaleX: canvas.width / img.width,
+                        scaleY: canvas.height / img.height
+                    });
+                });
+                setActiveInBtnGroup(e);
+                
+            }
+
+            function setActiveInBtnGroup(e) {
+                var children = document.querySelector('.itemGroup').children;
+                for (let child of children) {
+                    if (child.classList.contains("active")) {
+                        child.classList.remove('active');
+                    }
+                }
+                //console.log(e);
+                e.target.classList.add('active');
+            }
+
+            function addImgToCanvas(id) {
+                var selector = 'design' + id
+                var img = document.getElementById(selector);
+                var newImg = new fabric.Image(img, {
+                    width: img.naturalWidth,
+                    height: img.naturalHeight,
+                    left: 110,
+                    top: 120,
+                });
+                canvas.add(newImg);
+                filterCheck = document.querySelector('#blend');
+                filterCheck.checked = false;
+                canvas.setActiveObject(newImg);
+            }
+
+            function addTextToCanvas() {
+                var newText = new fabric.IText('text', {
+                    fontFamily: 'arial',
+                    left: 110,
+                    top: 120,
+                    objecttype: 'text'
+                });
+                canvas.add(newText);
+                filterCheck = document.querySelector('#blend');
+                filterCheck.checked = false;
+                canvas.setActiveObject(newText);
+            }
+
+            function renderIcon(icon) {
+                return function renderIcon(ctx, left, top, styleOverride, fabricObject) {
+                    var size = this.cornerSize;
+                    ctx.save();
+                    ctx.translate(left, top);
+                    ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle));
+                    ctx.drawImage(icon, -size/2, -size/2, size, size);
+                    ctx.restore();
+                }
+            }
+
+
+            fabric.Object.prototype.controls.deleteControl = new fabric.Control({
+                x: 0.5,
+                y: -0.5,
+                offsetY: -15,
+                offsetX: 5,
+                cursorStyle: 'pointer',
+                mouseUpHandler: deleteObject,
+                render: renderIcon(deleteImg),
+                cornerSize: 20
+            });
+
+            function deleteObject(eventData, transform) {
+                var target = transform.target;
+                var canvas = target.canvas;
+                canvas.remove(target);
+                canvas.requestRenderAll();
+            }
+
+            function applyFilter(index, filter) {
+                var obj = this.__canvas.getActiveObject();
+                if (obj._element) {
+                    obj.filters[index] = filter;
+                    obj.applyFilters();
+                    //console.log(obj);
+                    canvas.renderAll();
+                } else {
+                    obj.fill = filter.color;
+                    obj.set('fill', filter.color);
+                    obj.dirty = true;
+                    canvas.renderAll();
+                }
+            }
+
+            function applyFilterValue(index, prop, value) {
+                var obj = canvas.getActiveObject();
+                if (obj.filters[index]) {
+                    obj.filters[index][prop] = value;
+                    obj.applyFilters();
+                    canvas.renderAll();
+                }
+            }
+            document.querySelector('#blend').onclick= function() {
+                applyFilter(16, this.checked && new f.BlendColor({
+                color: document.getElementById('blend-color').value,
+                mode: 'tint',
+                alpha: '.65'
+                }));
+            };
+
+            document.querySelector('#blend-color').onchange = function() {
+                 var obj = canvas.getActiveObject();
+                 if (obj._element) {
+                    applyFilterValue(16, 'color', this.value);
+                 } else {
+                    obj.fill = this.value;
+                    obj.set('fill', this.value);
+                    obj.dirty = true;
+                    canvas.renderAll();
+                 }
+                
+            };
+
+            function handleDragStart(e) {
+                [].forEach.call(images, function (img) {
+                    img.classList.remove('img_dragging');
+                });
+                this.classList.add('img_dragging');
+            }
+            function handleDragOver(e) {
+                if (e.preventDefault) {
+                    e.preventDefault();
+                }
+                e.dataTransfer.dropEffect = 'copy';
+                return false;
+            }  
+            function handleDragEnter(e) {
+                this.classList.add('over');
+            }
+            function handleDragLeave(e) {
+                this.classList.remove('over');
+            }
+            function handleDrop(e) {
+                if (e.stopPropagation) {
+                    e.stopPropagation();
+                }
+                var img = document.querySelector('#images img.img_dragging');
+                //console.log('event: ', e);
+                var newImg = new fabric.Image(img, {
+                    width: img.naturalWidth,
+                    height: img.naturalHeight,
+                    left: e.layerX,
+                    top: e.layerY
+                });
+                canvas.add(newImg);
+                return false;
+            }
+            function handleDragEnd(e) {
+                [].forEach.call(images, function(img) {
+                    img.classList.remove('img_dragging');
+                });
+            }
+            var images = document.querySelectorAll('#images img');
+            [].forEach.call(images, function(img) {
+                img.addEventListener('dragstart', handleDragStart, false);
+                img.addEventListener('dragend', handleDragEnd,false);
+            });
+            var canvasContainer = document.getElementById('drpspc');
+            canvasContainer.addEventListener('dragenter', handleDragEnter, false);
+            canvasContainer.addEventListener('dragover', handleDragOver, false);
+            canvasContainer.addEventListener('dragleave', handleDragLeave, false);
+            canvasContainer.addEventListener('drop', handleDrop, false);
+        </script>
+        
         {% endblock %}
     </body>
 </html>

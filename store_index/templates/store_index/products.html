@@ -1,0 +1,33 @@
+{% extends "store_index/base.html" %}
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static "products/products.css" %}">
+{% endblock %}
+
+{% block head %}
+    <title>Products</title>
+{% endblock %}
+
+    {% block content %}
+        <section class="product-list">
+            {% for product in products %}
+                <a class="card" href="{{ book.get_absolute_url }}">
+                    {% for image in images %}
+                        {% if image.Product_id == product.id %}
+                            <img src="/media/{{ image.Picture }}" class="card-img-top" alt="bubbly shirt">
+                        {% endif %}
+                    {% endfor %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.productName }}</h5>
+                        <p class="card-text">Price: ${{ product.price }}</p>
+                        <p class="card-text">Click for details</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">{{ product.quantity }} Left in Stock!</small>
+                    </div>
+                </a>
+            {% endfor %}
+        </section>
+    {% endblock %}
+</html>

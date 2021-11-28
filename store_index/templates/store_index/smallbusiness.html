@@ -1,0 +1,49 @@
+{% extends "store_index/base.html" %}
+{% load static %}
+{% load store_extras %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="data:,">
+        
+        
+        {% block head %}
+        <title>Small Businesses</title>
+        <style>
+        #map {
+            height: 100%;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        </style>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+        {% endblock %}
+
+    </head>
+    <body>
+    {% block content %}
+
+        <div class="container mt-3">
+            <div class="row justify-content-center">
+                <div class="col-12 d-flex justify-content-center">
+
+                <div id="map" style="width:600px; height:600px;">
+                
+                </div>
+                
+                </div>
+            </div>
+
+        </div>
+        <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9zUV3dEKVm4NdVbCW3lainNj3aU-kILg&callback=initMap&v=weekly&channel=2"
+      async
+    ></script>
+    {% endblock %}
+    </body>
+</html>
