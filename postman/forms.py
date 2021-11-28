@@ -17,6 +17,9 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.transaction import atomic
 from django.utils.translation import gettext, gettext_lazy as _
+from store_index.models import Customer
+
+from twilio.twiml.messaging_response import Body
 
 from .fields import CommaSeparatedUserField
 from .models import Message, get_user_name
@@ -108,9 +111,19 @@ class BaseWriteForm(forms.ModelForm):
         Return False if one of the messages is rejected.
 
         """
-        recipients = self.cleaned_data.get('recipients', [])
+
+        if self.cleaned_data:
+            recipients = self.cleaned_data.get('recipients', [])
         if not recipients and not recipient:
             recipient = User.objects.get(username="punky")
+        sbj = self.cleaned_data.get('subject')
+        if "SMS from: " in sbj:
+            sender = sbj.replace('SMS from: ', '')
+            customer = Customer.objects.get(PhoneNumber=sender)
+            user = User.objects.get(id=customer.User_id)
+            self.instance.sender = user
+            self.instance.body = self.body
+            self.instance.subject = self.subject
         if parent and not parent.thread_id:  # at the very first reply, make it a conversation
             parent.thread = parent
             parent.save()
@@ -153,9 +166,9 @@ class WriteForm(BaseWriteForm):
     """The form for an authenticated user, to compose a message."""
     # specify help_text only to avoid the possible default 'Enter text to search.' of ajax_select v1.2.5
     #recipients = CommaSeparatedUserField(label=(_("Recipients"), _("Recipient")), help_text='')
-
+    image = forms.ImageField(required=False)
     class Meta(BaseWriteForm.Meta):
-        fields = ('subject', 'body')
+        fields = ('subject', 'image', 'body')
 
 
 class AnonymousWriteForm(BaseWriteForm):
@@ -208,7 +221,13 @@ class QuickReplyForm(BaseReplyForm):
     The recipient is imposed and a default value for the subject will be provided.
 
     """
-    pass
+    class Meta(BaseWriteForm.Meta):
+        fields = ('body',)
+        widgets = {
+            # for better confort, ensure a 'cols' of at least
+            # the 'width' of the body quote formatter.
+            'body': forms.Textarea(attrs={'cols': WRAP_WIDTH, 'rows': 5}),
+        }
 
 
 allow_copies = not getattr(settings, 'POSTMAN_DISALLOW_COPIES_ON_REPLY', False)
@@ -218,5 +237,7 @@ class FullReplyForm(BaseReplyForm):
         recipients = CommaSeparatedUserField(
             label=(_("Additional recipients"), _("Additional recipient")), help_text='', required=False)
 
+    image = forms.ImageField(required=False)
     class Meta(BaseReplyForm.Meta):
-        fields = (['recipients'] if allow_copies else []) + ['subject', 'body']
+        fields = ('subject', 'image', 'body')
+        

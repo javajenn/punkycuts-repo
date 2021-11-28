@@ -269,7 +269,8 @@ class Message(models.Model):
     SUBJECT_MAX_LENGTH = 120
 
     subject = models.CharField(_("subject"), max_length=SUBJECT_MAX_LENGTH)
-    body = models.TextField(_("body"), blank=True)
+    body = models.TextField(_("body"), blank=False)
+    image = models.ImageField(upload_to='images/', null=True)
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_messages',
         null=True, blank=True, verbose_name=_("sender"))
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_messages',

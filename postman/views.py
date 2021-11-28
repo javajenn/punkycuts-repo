@@ -18,6 +18,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import FormView, RedirectView, TemplateView, View
+from django.core.files.storage import FileSystemStorage
 
 from .fields import autocompleter_app
 from .forms import WriteForm, AnonymousWriteForm, QuickReplyForm, FullReplyForm
@@ -379,6 +380,7 @@ class DisplayMixin(NamespaceMixin, object):
         else:
             received = None
         context.update({
+            #'image': self.request.FILES,
             'pm_messages': self.msgs,
             'archived': archived,
             'reply_to_pk': received.pk if received else None,

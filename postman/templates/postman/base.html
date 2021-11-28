@@ -1,16 +1,41 @@
 {% extends "store_index/base.html" %}
 {# not myself but a site-level one (TEMPLATE_DIRS setting) #}
-{% load i18n static %}{% load postman_tags %}
+{% load i18n static %}{% load postman_tags %} 
 {% block title %}{% trans "Messaging" %}{% endblock %}
 {% block extrahead %}{{ block.super }}
 <link type="text/css" media="all" rel="stylesheet" href="{% static 'postman/css/postman.css' %}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Shippori+Antique">
+<script type="text/javascript" src="{% static 'postman/js/scripts.js' %}"></script>
+<style>
+    #postman_menu {
+        list-style-type: none;
+        font-size: larger;
+        font-family: "Shippori Antique";
+    }
+    #postman_menu a {
+        color: #DFA575;
+        padding: 1em;
+        border-radius: 20px;
+    }
+
+    #postman_menu a:hover {
+        color: #D27830;
+    }
+
+</style>
 {% endblock %}
 {% block postman_menu %}
-<ul id="postman_menu">{% postman_unread as unread_count %}
- <li><a href="{% url 'postman:inbox' %}">&raquo;&nbsp;{% trans "Inbox" %}{% if unread_count %} <strong>({{ unread_count }})</strong>{% endif %}</a></li>
- <li><a href="{% url 'postman:sent' %}">&raquo;&nbsp;{% trans "Sent Messages" %}</a></li>
- <li><a href="{% url 'postman:write' %}">&raquo;&nbsp;{% trans "Write" %}</a></li>
- <li><a href="{% url 'postman:archives' %}">&raquo;&nbsp;{% trans "Archives" %}</a></li>
- <li><a href="{% url 'postman:trash' %}">&raquo;&nbsp;{% trans "Trash" %}</a></li>
-</ul>
+<div class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col-12-md col-10-sm d-flex justify-content-center">
+            <div class="d-flex flex-wrap mt-3" id="postman_menu">{% postman_unread as unread_count %}
+            <a class="mx-auto" href="{% url 'postman:inbox' %}">&raquo;&nbsp;{% trans "Inbox" %}{% if unread_count %} <strong>({{ unread_count }})</strong>{% endif %}</a></li>
+            <a class="mx-auto" a href="{% url 'postman:sent' %}">&raquo;&nbsp;{% trans "Sent Messages" %}</a>
+            <a class="mx-auto" a href="{% url 'postman:write' %}">&raquo;&nbsp;{% trans "Write" %}</a>
+            <a class="mx-auto" a href="{% url 'postman:archives' %}">&raquo;&nbsp;{% trans "Archives" %}</a>
+            <a class="mx-auto" a href="{% url 'postman:trash' %}">&raquo;&nbsp;{% trans "Trash" %}</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
