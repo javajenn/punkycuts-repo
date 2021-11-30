@@ -34,12 +34,22 @@ class Customer(models.Model):
     def __str__(self):
         return self.FirstName + " " + self.LastName
 
+    def save(self, *args, **kwargs):
+      phone = self.PhoneNumber
+      phone = phone.replace(' ', '')
+      phone = phone.replace('(', '')
+      phone = phone.replace(')', '')
+      phone = phone.replace('-', '')
+      phone = '(' + phone[0:3] + ') ' + phone[3:6] + '-' + phone[6:10]
+      self.PhoneNumber = phone
+      super(Customer, self).save(*args, **kwargs)
+
 class Category(models.Model):
   Name = models.CharField(max_length=100)
   Description = models.CharField(max_length=100)
 
   def __str__(self):
-    return self.category_name
+    return self.Name
 
   class Meta:
      verbose_name_plural="category"
@@ -48,7 +58,7 @@ class Status(models.Model):
   Description = models.CharField(max_length=100)
   
   def __str__(self):
-    return f"{self.status_description}"
+    return f"{self.Description}"
 
   class Meta:
   #  db_table = 'products_status'
@@ -59,13 +69,13 @@ class Order(models.Model):
     Date = models.DateTimeField(auto_now=False, auto_now_add=False)
 
     def __str__(self):
-        return self.id
+        return str("ORDERID: " + str(self.id) + " CUSTOMER: " + str(self.Customer))
 
 class Type(models.Model):
   Product_Type = models.CharField(max_length=100)
 
-  def str(self):
-    return f"{self.product_type}"
+  def __str__(self):
+    return f"{self.Product_Type}"
 
   class Meta:
     verbose_name_plural='type'
@@ -90,7 +100,7 @@ class Product(models.Model):
 
     def __str__(self):
       # return f"{self.productName} ({self.productDescription}) ({self.statusID}) ({self.price}) ({self.quantity}) ({self.productTypeID})"
-        return f"{self.productName} ({self.productDescription}) ({self.status}) ({self.price}) ({self.quantity}) ({self.product_categories})"
+        return f"{self.Name}"
 
     class Meta:
     # db_table = 'products_product'
@@ -100,6 +110,8 @@ class Product(models.Model):
 class OrderProduct(models.Model):
     Order = models.ForeignKey(Order, on_delete=models.CASCADE, null=False)
     Product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False)
+      #def __str__(self):
+     #   return 
 
 class Cart(models.Model):
     Product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False)

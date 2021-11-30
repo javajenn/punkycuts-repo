@@ -1,12 +1,7 @@
 from django.contrib import admin
-from .models import *
-# Register your models here.
-admin.site.register(Customer)
-admin.site.register(Order)
-admin.site.register(State)
-admin.site.register(Category)
-admin.site.register(Status)
-admin.site.register(Product)
-admin.site.register(OrderProduct)
-admin.site.register(Cart)
-admin.site.register(Image)
+from django.apps import apps
+
+app = apps.get_app_config('store_index')
+
+for model_name, model in app.models.items():
+    admin.site.register(model)
