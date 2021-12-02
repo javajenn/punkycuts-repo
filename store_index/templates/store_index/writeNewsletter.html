@@ -1,3 +1,6 @@
+{% extends "store_index/base.html" %}
+
+{% block content %}
 <form method="POST">{% csrf_token %}
     <div class="input-group">
     {{ Form }}
@@ -6,3 +9,4 @@
         </span>
     </div>
 </form>
+{% endblock %}

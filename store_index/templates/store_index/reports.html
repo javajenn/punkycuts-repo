@@ -1,7 +1,10 @@
+{% extends "store_index/base.html" %}
 <!DOCTYPE html>
 <html>
+{% block title %}
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
+{% endblock%}
+{%block content%}
 <body>
 <div
 id="myChart" style="width:100%; max-width:600px; height:500px;">
@@ -29,7 +32,7 @@ var chart = new google.visualization.PieChart(document.getElementById('myChart')
   chart.draw(data, options);
 }
 </script>
-
+{%endblock%}
 </body>
 </html>
 

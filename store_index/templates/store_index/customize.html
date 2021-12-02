@@ -6,8 +6,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" href="data:,">
+        {% block title %}
         <title>
-            {% block title %}
             Customize
         </title>
         <script type="text/javascript" src="{% static 'js/fabric.js' %}">
@@ -53,7 +53,7 @@
                         <a onclick="addImgToCanvas(4)"><img id="design4" src="{% static '/design_onlyinnorthside.png' %}"><pre class="d-flex justify-content-center">only in northside</pre></a>
                         <a onclick="addImgToCanvas(5)"><img id="design5" src="{% static '/design_thatmamahustle.png' %}"><pre class="d-flex justify-content-center">that mama hustle</pre></a>
                         <a onclick="addImgToCanvas(6)"><img id="design6" src="{% static '/design_dadfuel.png' %}"><pre class="d-flex justify-content-center">dad fuel</pre></a>
-                        <a onclick="addTextToCanvas()"><img id="addText" src=""><pre class="d-flex justify-content-center">add your own text!</pre></a>
+                        <a onclick="addTextToCanvas()"><img id="addText" src="{% static '/addowntext.png' %}"><pre class="d-flex justify-content-center">add your own text!</pre></a>
                     </div>
                 </div>
             </div>
@@ -62,7 +62,7 @@
         <div class="container d-flex flex-column">
             <div class="row">
                 <div class="col-12 d-flex justify-content-center">
-                    <div class="my-3 btn-group itemGroup" role="group">
+                    <div class="mt-4 btn-group itemGroup" role="group">
                         <button type="button" id="shirtBtn" class="btn btn-dark shadow-sm" onclick="setBgImg('shirt', event)">Shirt</button>
                         <button type="button" id="mugBtn" class="btn btn-dark shadow-sm" onclick="setBgImg('mug', event)">Mug</button>
                         <button type="button" id="waterBottleBtn" class="btn btn-dark shadow-sm" onclick="setBgImg('waterbottle', event)">Water Bottle</button>
@@ -72,13 +72,13 @@
             <div class="row">
                 <div class="col-12 d-flex justify-content-center">
                     <div class="drpspc" id="drpspc">
-                        <canvas id="canvas" class="border" width="468px" height="468px" ></canvas>
+                        <canvas id="canvas" class="border mt-4" width="468px" height="468px" ></canvas>
 
                         {% comment %} <div class="drop_shirt d-flex justify-content-center">
                             <img class="img-fluid h-100" src="{% static '/drop_shirt.png' %}">
                         </div> {% endcomment %}
                     </div>
-                    <div class="position-absolute float-end mt-2 mx-auto d-none" style="" id="filters">
+                    <div class="position-absolute float-end mt-3 mx-auto d-none" style="" id="filters">
                         <label class="d-block">Change Color: <input type="checkbox" id="blend"></label>
                         <label class="d-block">Color: <input type="color" value="#D27830" id="blend-color"></label>
                     </div>
@@ -87,7 +87,7 @@
             <div class="row">
                 <div class="col-12 d-flex justify-content-center">
                     {% csrf_token %}
-                    <button type="button" id="submit" class="btn btn-primary mt-4" onclick="saveCanvas()">Download Customization!</button>                
+                    <button type="button" id="submit" class="btn btn-primary mt-5" onclick="saveCanvas()">Download Customization!</button>                
                 </div>
             </div>
         </div>
@@ -100,6 +100,8 @@
                 canvas.height = parent.offsetHeight;
                 canvas.clientWidth = parent.offsetWidth;
                 canvas.clientHeight = parent.offsetHeight;
+
+                $('#shirtBtn').trigger('click');
             });
 
             function showFilter(event) {
@@ -201,7 +203,8 @@
 
             function addTextToCanvas() {
                 var newText = new fabric.IText('text', {
-                    fontFamily: 'arial',
+                    fontFamily: 'courier',
+                    fill: 'black',
                     left: 110,
                     top: 120,
                     objecttype: 'text'
@@ -250,10 +253,17 @@
                     //console.log(obj);
                     canvas.renderAll();
                 } else {
-                    obj.fill = filter.color;
-                    obj.set('fill', filter.color);
-                    obj.dirty = true;
-                    canvas.renderAll();
+                    if (filter) {
+                        obj.fill = filter.color;
+                        obj.set('fill', filter.color);
+                        obj.dirty = true;
+                        canvas.renderAll();
+                    } else {
+                        obj.fill = 'black';
+                        obj.set('fill', 'black');
+                        obj.dirty = true;
+                        canvas.renderAll();
+                    }
                 }
             }
 
