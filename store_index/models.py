@@ -47,6 +47,11 @@ class Customer(models.Model):
 class Category(models.Model):
   Name = models.CharField(max_length=100)
   Description = models.CharField(max_length=100)
+  slug = models.SlugField(default="", blank=True, null=False, db_index=True)
+
+  def save(self, args, **kwargs):
+    self.slug = slugify(self.Name)
+    super().save(args, **kwargs)
 
   def __str__(self):
     return self.Name
@@ -88,8 +93,12 @@ class Product(models.Model):
     Price = models.DecimalField(max_digits=5, decimal_places=2)
     Quantity = models.IntegerField()
     Type = models.ForeignKey(Type, on_delete=models.CASCADE, default='')
-    Slug = models.SlugField(default="", blank=True, null=False, db_index=True) #T-shirt-1 => t-shirt-1
+    slug = models.SlugField(default="", blank=True, null=False, db_index=True) #T-shirt-1 => t-shirt-1
     Product_Categories = models.ManyToManyField(Category)
+
+    def save(self, args, **kwargs):
+      self.slug = slugify(self.Name)
+      super().save(args, **kwargs)
 
     def get_absolute_url(self):
       return reverse("product-detail", args=[self.slug])
@@ -121,8 +130,45 @@ class Cart(models.Model):
 class Image(models.Model):
     FileName = models.CharField(max_length=50, null=False, blank=False)
     Picture = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100)
-    DateAdded = models.DateTimeField(auto_now=False, auto_created=True, editable=False)
+    DateAdded = models.DateTimeField(auto_now=True, auto_created=True, editable=False)
     Product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False)
 
 class Screenshot(models.Model):
     screenshot = models.ImageField(upload_to='img/screenshots/', help_text='Html2canvas screenshot')
+
+# Newsletter Users Class
+class NewsletterUser(models.Model):
+    # Subsciption Date
+    DateSubscribed = models.DateTimeField(auto_now_add=True)
+    DateSubscribedString = str(DateSubscribed)
+
+    # Foreign Keys
+    #Customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True, blank=true)
+    SubscriberEmail = models.EmailField(max_length=50, default=None)
+
+    # Returns
+    def __str__(self):
+        return self.SubscriberEmail
+
+# Newsletter Class
+class Newsletter(models.Model):
+    EMAIL_STATUS_CHOICES = (
+        ('Draft', 'Draft'),
+        ('Published', 'Published')
+    )
+
+    Subject = models.CharField(max_length=250)
+    Body = models.TextField()
+    Email = models.ManyToManyField(NewsletterUser)
+    Status = models.CharField(max_length=10, choices=EMAIL_STATUS_CHOICES)
+    DateCreated = models.DateTimeField(auto_now_add=True)
+    DateUpdated = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(default="", blank=True, null=False, db_index=True)
+
+    def save(self, args, **kwargs):
+      self.slug = slugify(self.Subject)
+      super().save(args, **kwargs)
+
+    # Returns
+    def __str__(self):
+        return self.Subject

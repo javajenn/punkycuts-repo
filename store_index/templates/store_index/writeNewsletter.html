@@ -1,0 +1,8 @@
+<form method="POST">{% csrf_token %}
+    <div class="input-group">
+    {{ Form }}
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="submit">Submit</button>
+        </span>
+    </div>
+</form>

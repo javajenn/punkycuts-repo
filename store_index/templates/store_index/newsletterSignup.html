@@ -1,0 +1,19 @@
+{% extends "store_index/base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-lg-offset-3">
+            <h3 class="text-center">Subscribe to our newletter today.</h3>
+            <form method="POST">{% csrf_token %}
+                <div class="input-group">
+                {{ Form }}
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">Subscribe</button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    <div>
+<div>
+{% endblock %}

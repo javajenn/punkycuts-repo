@@ -1,0 +1,21 @@
+{% extends 'store_index/base.html' %}
+{% load static %}
+
+{% block head %}
+    <title>Punky-Product</title>
+{% endblock %}
+
+{% block content %}
+    
+    <img src="{{ image.Picture.url }}" alt="{{ product.productName }}" title="{{ product.productName }}">
+
+    <h1>{{ product.productName }}</h1>
+    <p>{{ product.productDescription }}</p>
+    <p>Quantity: {{ product.quantity }}</p>
+    <p>Price: {{ product.price }}</p>
+    <button id="add_to_cart">add to cart</button>
+    <button id="purchase_now">purchase now</button>
+    <button id="other_products">back to products</button>
+
+
+{% endblock %}

@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError 
-from .models import Customer
+from .models import *
 from django.contrib.auth.models import User
 
 class CustomerSignUpForm(forms.ModelForm):
@@ -40,3 +40,22 @@ class UsernameEditForm(forms.ModelForm):
         help_texts = {
             'username': ('150 characters or fewer. Only letters, digits, and _ @ . + - allowed.'),
         }
+
+# Newletter User sign up class.
+class NewsletterSignUpForm(forms.ModelForm):
+    class Meta:
+        model = NewsletterUser
+        fields = ['SubscriberEmail']
+
+        # Normalize Email Function
+        def NormalizeEmail(self):
+            SubscriberEmail = self.NormalizedData.get('SubscriberEmail')
+
+            # Returns
+            return SubscriberEmail
+
+# Newsletter creation class.
+class NewsletterCreationForm(forms.ModelForm):
+    class Meta:
+        model = Newsletter
+        fields = ['Subject', 'Body', 'Email', 'Status']

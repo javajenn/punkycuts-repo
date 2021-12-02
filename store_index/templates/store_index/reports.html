@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<body>
+<div
+id="myChart" style="width:100%; max-width:600px; height:500px;">
+</div>
+
+<script>
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+
+function drawChart() {
+var data = google.visualization.arrayToDataTable([
+  ['Products Sold', 'Dollars'],
+  ['Mugs',{{MugCount}}],
+  ['TShirts',{{TShirtCount}}],
+  ['Bags',{{BagCount}}],
+  ['Onesies',{{OnesieCount}}],
+]);
+
+var options = {
+  title:'Punky Cuts Product Distrubition',
+  colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6']
+};
+
+var chart = new google.visualization.PieChart(document.getElementById('myChart'));
+  chart.draw(data, options);
+}
+</script>
+
+</body>
+</html>
+

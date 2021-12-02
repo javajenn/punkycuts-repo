@@ -115,29 +115,26 @@
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" id="navbardropSeasonal" role="button" data-bs-toggle="dropdown" aria-expanded="false">Seasonal</a>
                                         <ul class="dropdown-menu" aria-labelledby="navbardropSeasonal">
-                                            <li><a class="dropdown-item" href="#">Cicadas</a></li>
-                                            <li><a class="dropdown-item" href="#">Fall</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'cicadas' %}">Cicadas</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'fall' %}">Fall</a></li>
                                         </ul>
                                     </li>
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" id="navbardropOccasions" role="button" data-bs-toggle="dropdown" aria-expanded="false">Occasions</a>
                                         <ul class="dropdown-menu" aria-labelledby="navbardropOccasions">
-                                            <li><a class="dropdown-item" href="#">Baby Shower</a></li>
-                                            <li><a class="dropdown-item" href="#">Birthday</a></li>
-                                            <li><a class="dropdown-item" href="#">Wedding</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'baby-shower' %}">Baby Shower</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'birthday' %}">Birthday</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'wedding' %}">Wedding</a></li>
                                         </ul>                               
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{% url 'products' %}">All Products</a>
+                                        <a class="nav-link" href="{% url 'all_products' %}">All Products</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{% url 'customize' %}">Customize</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="#">About Us</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#">Gallery</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{% url 'smallbusiness' %}">Support Local Business</a>

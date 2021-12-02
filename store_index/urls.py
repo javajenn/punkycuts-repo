@@ -10,6 +10,8 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('activate/<uidb64>/<token>', views.activate_user, name='activate'),
     path('api/sms/', views.handle_sms, name="sendsms"),
-    path('products/', views.products, name="products"),
+    path('products/', views.products, name='all_products'),
+    path('products/category/<slug:cat>', views.products_categories, name='products'),
+    path('products/details/<slug:slug>', views.product_details, name='product_details'),
     path('small-business-spotlight/', views.smallbusiness, name="smallbusiness")
 ]

@@ -234,7 +234,29 @@ def signup(request):
     return render(request, 'store_index/signup.html', context)
 
 
-def products(request):#, cat):
+def products(request):
+    products = Product.objects.all()
+    product_values = Product.objects.all().values()
+    images = Image.objects.all()
+    output_products = []
+
+    i = 0
+
+    for product in products:
+        output_products.append(product_values[i])
+        categories = products[i].Product_Categories.all().values()
+        output_products[i]['categories'] = []
+        for category in categories:
+            output_products[i]['categories'].append(category['Name'])
+        i += 1
+
+
+    return render(request, 'store_index/products.html', {
+        "products": output_products,
+        "images": images
+    })
+
+def products_categories(request, cat):
     all_products = Product.objects.all()
     all_product_values = Product.objects.all().values()
     images = Image.objects.all()
@@ -244,18 +266,28 @@ def products(request):#, cat):
     i = 0
 
     for product in all_products:
-        categories = all_products[i].product_categories.all().values()
-        j = 0
-        # for category in categories:
-        #     if category['slug'] == cat:
-        #         output_products.append(all_product_values[i])
-        #     j += 1
-        # i += 1
+        categories = all_products[i].Product_Categories.all().values()
+        for category in categories:
+            if category['slug'] == cat:
+                output_products.append(all_product_values[i])
+                output_products[len(output_products) - 1]['categories'] = []
+                for prod_cat in categories:
+                    output_products[len(output_products) - 1]['categories'].append(prod_cat['Name'])
+        i += 1
 
     return render(request, 'store_index/products.html', {
         "products": output_products,
-        #"slug": cat,
+        "slug": cat,
         "images": images,
+    })
+
+def product_details(request, slug):
+    product = Product.objects.get(slug=slug)
+    image = Image.objects.get(Product_id=product.id)
+
+    return render(request, 'store_index/product_details.html', {
+        "product": product,
+        "image": image
     })
 
 def smallbusiness(request):
