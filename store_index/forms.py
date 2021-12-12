@@ -59,3 +59,16 @@ class NewsletterCreationForm(forms.ModelForm):
     class Meta:
         model = Newsletter
         fields = ['Subject', 'Body', 'Email', 'Status']
+
+# class CustomerForm(forms.ModelForm):
+#     class Meta:
+#         model = Customer
+#         fields = '__all__'
+
+class ShippingForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ("FirstName", "LastName", "Email", "PhoneNumber", "ShippingAddress", "ShippingCity", "ShippingZipCode", "ShippingState")
+        widgets = {
+            #'Email': forms.EmailInput(attrs={'autofocus': ''}),
+        }

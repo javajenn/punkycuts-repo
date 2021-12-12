@@ -1,0 +1,119 @@
+{% extends 'store_index/base.html' %}
+{% load static %}
+
+{% block head %}
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Ensures optimal rendering on mobile devices -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" /> <!-- Optimal Internet Explorer compatibility -->
+    <title>Billing Information</title>
+{% endblock %}
+
+{% block content %}
+
+    <h1>Billing Information</h1>
+    <h3>{{ customer.FirstName }} {{ customer.LastName }} Please Review Items Before Purchase</h3>
+
+    {% for product in products %}
+
+        <div id="card product-container">
+            {% for image in images %}
+                {% if image.Product_id == product.id %}
+                    <img src="{{ image.Picture.url }}" class="card-img-top" alt="">
+                {% endif %}
+            {% endfor %}
+            <div class="card-body">
+                <h5 class="card-title">{{ product.productName }}</h5>
+                <p class="card-text">Price: ${{ product.price }}</p>
+            </div>
+        </div>
+
+    {% endfor %}
+
+    <p>Final Price: {{ total_price }}</p>
+
+    <!-- Include the PayPal JavaScript SDK; replace "test" with your own sandbox Business account app client ID -->
+    <script src="https://www.paypal.com/sdk/js?client-id=ASDVcs0MbwdTeStYjcLFtKdFaGBVwXRtGWeQSQdIlbt7fo13pNgR2JQHWjAFDqmiuqbtNxagJRqerwB8&currency=USD&enable-funding=venmo"></script>
+
+    <!-- Set up a container element for the button -->
+    <div id="paypal-button-container"></div>
+
+    {% comment %} {% include 'mainapp/checkout_complete.html' %} {% endcomment %}
+
+    <script>
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+      var total = '{{ total_price }}'
+      var product_ids = {{ product_id_list }}
+      var customer_id = {{ customer.CustomerID }}
+
+      function completeOrder(){
+          var url = "{% url 'checkout_complete' %}"
+
+          fetch(url, {
+              method: 'POST',
+              headers: {
+                  'Content-type':'application/json',
+                  'X-CSRFToken': csrftoken
+              },
+              body: JSON.stringify({product_id_list: product_ids, customer_ID: customer_id})
+          })
+      }
+
+      paypal.Buttons({
+
+        style: {
+            layout: 'vertical',
+            color: 'blue',
+            shape: 'rect',
+            label: 'pay',
+            height: 40
+        },
+
+        // Sets up the transaction when a payment button is clicked
+        createOrder: function(data, actions) {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: total // Can reference variables or functions. Example: `value: document.getElementById('...').value`
+              }
+            }]
+          });
+        },
+
+        // Finalize the transaction after payer approval
+        onApprove: function(data, actions) {
+          return actions.order.capture().then(function(orderData) {
+            // Successful capture! For dev/demo purposes:
+                completeOrder()
+                console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                var transaction = orderData.purchase_units[0].payments.captures[0];
+
+            // When ready to go live, remove the alert and show a success message within this page. For example:
+                var element = document.getElementById('paypal-button-container');
+                element.innerHTML = '';
+                element.innerHTML = '<h3>Thank you for your payment!</h3>';
+            // Or go to another URL:  actions.redirect('thank_you.html');
+
+            
+          });
+        }
+      }).render('#paypal-button-container');
+
+    </script>
+
+{% endblock %}

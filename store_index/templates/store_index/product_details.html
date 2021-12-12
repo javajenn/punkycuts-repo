@@ -6,16 +6,152 @@
 {% endblock %}
 
 {% block content %}
-    
-    <img src="{{ image.Picture.url }}" alt="{{ product.productName }}" title="{{ product.productName }}">
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12 d-flex justify-content-center align-items-center">
+                {% if images.count == 0 %}
+                {% elif images.count > 1 %}
+                <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        {% for i in images %}
+                            <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="{{forloop.counter0}}" {% if forloop.counter0 == 0 %} class="active" aria-current="true" {% endif %} aria-label="photo-{{forloop.counter}}"></button>
+                        {% endfor %}
+                    </div>
+                    <div class="carousel-inner">
+                        {% for i in images %}
+                            <div {% if forloop.counter0 == 0 %} class="carousel-item active" {% else %} class="carousel-item" {% endif %}>
+                                <img src="{{i.Picture.url}}" class="d-block w-100">
+                            </div>
+                        {% endfor %}
+                    </div>
 
-    <h1>{{ product.productName }}</h1>
-    <p>{{ product.productDescription }}</p>
-    <p>Quantity: {{ product.quantity }}</p>
-    <p>Price: {{ product.price }}</p>
-    <button id="add_to_cart">add to cart</button>
-    <button id="purchase_now">purchase now</button>
-    <button id="other_products">back to products</button>
+                </div>
+                {% else %}
+                <div class="productImg">
+                    {% for i in images %}
+                    <img src="{{ i.Picture.url }}" alt="{{ product.productName }}" title="{{ product.productName }}">
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="productInfo ms-5">
+                    <h1>{{ product.Name }}</h1>
+                    <p>{{ product.Description }}</p>
+                    {% if product.Type.Product_Type == 'T-Shirt' %}
+                        <select name="sizeOptions">
+                            {% for size in sizes %}
+                            <option>{{size}}</option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}                   
+                    <p class="d-inline-block">In Stock: {{ product.Quantity }}</p>
+                    <p>Price: {{ product.Price }}</p>
+                    <input type="hidden" id="prodToCart" name="prodToCart" value="{{product.id}}">
+                    <button type="submit" id="add_to_cart" onclick="addToCart()">add to cart</button>
+                    <button id="purchase_now">purchase now</button>
+                    <button id="other_products">back to products</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>var product = "{{dProduct}}";</script>
+    <script>
+    $(document).ready(function() {
+        if (sessionStorage.getItem('cart-reload') == 'true') {
+            $('#btnCart').trigger('click');
+            sessionStorage.setItem('cart-reload', 'false');
+        }
+    });
+    // const product = JSON.parse(document.getElementById('hello-data').textContent);
+    function addToCart() {
+        event.preventDefault();
+        url = "{% url 'product_details' slug=product.slug %}"
+        //data = $("")
+        $.post(url, 
+            {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            function(data) {
+                if (data.quantity > 1) {
+                    // update the dropdown with new quantity
+                    const id = 'quantityDropdown' + '{{product.id}}';
+                    let query = '#' + id + ' option:checked';
+                    quantitySelected = document.querySelector(query);
+                    console.log(quantitySelected);
+                    quantitySelected.removeAttribute('selected');
+                    query = '#' + id + ' option';
+                    options = document.querySelectorAll(query);
+                    console.log(options);
+                    options.forEach(o => {
+                        if (o.value == data.quantity) {
+                            o.setAttribute('selected', '');
+                        }
+                    });                   
+                } else if (data.quantity == 1) {
+                    // need to reload bc this is the first time
+                    console.log(data);
+                    sessionStorage.setItem('cart-reload', 'true');
+                    location.reload();
+                }
 
+                // now update subtotal 
+                if (data.subtotal) {
+                    let subtotal = 'Subtotal: $' + data.subtotal;
+                    let div = document.getElementById('cartSubtotal')
+                    div.innerHTML = subtotal;
+                }
+
+                let newMsg = Object.values(data).includes('newMessage');
+                console.log(newMsg);
+                if (newMsg) {
+                    // create error message w/o a page reload
+                    let newToast = document.createElement('div');
+                    newToast.classList.add('toast');
+                    newToast.classList.add('bg-danger');
+                    newToast.classList.add('notification');
+                    newToast.setAttribute('data-delay', '9000');
+                    newToast.setAttribute('id', 'toastCart');
+                    let newToastHeader = document.createElement('div');
+                    newToastHeader.classList.add('toast-header');
+                    let newToastText = document.createElement('strong');
+                    newToastText.classList.add('me-auto');
+                    newToastText.innerHTML = "ERROR";
+                    let btn = document.createElement('button');
+                    btn.setAttribute('type', 'button');
+                    btn.setAttribute('data-bs-dismiss', 'toast');
+                    btn.setAttribute('aria-label', 'close');
+                    btn.classList.add('btn-close');
+                    let newToastMsg = document.createElement('div');
+                    newToastMsg.classList.add('toast-body');
+                    newToastMsg.innerHTML = "We only allow a maximum quantity of 12 at this time.";
+                    newToastHeader.appendChild(newToastText);
+                    newToastHeader.appendChild(btn);
+                    newToast.appendChild(newToastHeader);     
+                    newToast.appendChild(newToastMsg);
+                    document.body.appendChild(newToast);                    
+                    let toastEl = document.getElementById('toastCart');
+                    let toast = new bootstrap.Toast(toastEl);
+                    toast.show();
+                    $('.toast').toast('show');
+                    console.log(toastEl);
+                    console.log(toast);
+                    //location.reload();
+                }
+                //console.log(data.msg);
+                if (data.quantity > 1) {
+                    $('#btnCart').trigger('click');
+                }
+        });
+        //$('#btnCart').trigger('click');
+        //$('#btnCart').trigger('click');
+     //   prdct = JSON.parse(product);
+     //   console.log(product);
+     //   product = product.replaceAll("&#x27;", "'");
+     //   product = product.replaceAll('&quot;', '"');
+     //   product = product.replaceAll('&lt;', '<');
+     //   product = product.replaceAll('&gt;', '>');
+        //console.log(JSON.parse(product));
+
+    }
+    </script>
 
 {% endblock %}

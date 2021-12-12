@@ -49,9 +49,9 @@ class Category(models.Model):
   Description = models.CharField(max_length=100)
   slug = models.SlugField(default="", blank=True, null=False, db_index=True)
 
-  def save(self, args, **kwargs):
+  def save(self, *args, **kwargs):
     self.slug = slugify(self.Name)
-    super().save(args, **kwargs)
+    super().save(*args, **kwargs)
 
   def __str__(self):
     return self.Name
@@ -76,8 +76,14 @@ class Order(models.Model):
     def __str__(self):
         return str("ORDERID: " + str(self.id) + " CUSTOMER: " + str(self.Customer))
 
+class Size(models.Model):
+  Product_Size = models.CharField(max_length=20)
+  def __str__(self):
+    return self.Product_Size
+
 class Type(models.Model):
   Product_Type = models.CharField(max_length=100)
+  Type_Size = models.ManyToManyField(Size, blank=True)
 
   def __str__(self):
     return f"{self.Product_Type}"
@@ -89,16 +95,18 @@ class Product(models.Model):
     Name = models.CharField(max_length=50)
     Description = models.CharField(max_length=100)
     #statusID = models.IntegerField()
-    Status = models.ForeignKey(Status, on_delete= models.CASCADE, related_name="products", default='')
+    Status = models.ForeignKey(Status, on_delete=models.CASCADE, related_name="products", default='')
     Price = models.DecimalField(max_digits=5, decimal_places=2)
     Quantity = models.IntegerField()
     Type = models.ForeignKey(Type, on_delete=models.CASCADE, default='')
     slug = models.SlugField(default="", blank=True, null=False, db_index=True) #T-shirt-1 => t-shirt-1
     Product_Categories = models.ManyToManyField(Category)
-
-    def save(self, args, **kwargs):
+    #Order = models.ManyToManyField(Order)
+    Size = models.ForeignKey(Size, on_delete=models.CASCADE, null=True, blank=True)
+    #Color = ?
+    def save(self, *args, **kwargs):
       self.slug = slugify(self.Name)
-      super().save(args, **kwargs)
+      super().save(*args, **kwargs)
 
     def get_absolute_url(self):
       return reverse("product-detail", args=[self.slug])
@@ -119,13 +127,20 @@ class Product(models.Model):
 class OrderProduct(models.Model):
     Order = models.ForeignKey(Order, on_delete=models.CASCADE, null=False)
     Product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False)
-      #def __str__(self):
-     #   return 
+    Price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    Quantity = models.PositiveIntegerField(default=1)
+    #Subtotal = models.
+    def __str__(self):
+      return f"ORDERID: {self.Order.id} PRODUCT: {self.Product}"
 
-class Cart(models.Model):
-    Product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False)
-    Quantity = models.IntegerField(default=None)
-    Price = models.IntegerField(default=None)
+    def save(self, *args, **kwargs):
+      self.Price =  self.Product.Price * self.Quantity
+      super().save(*args, **kwargs)
+
+# class Cart(models.Model):
+#     Product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False)
+#     Quantity = models.IntegerField(default=None)
+#     Price = models.IntegerField(default=None)
 
 class Image(models.Model):
     FileName = models.CharField(max_length=50, null=False, blank=False)
@@ -165,10 +180,28 @@ class Newsletter(models.Model):
     DateUpdated = models.DateTimeField(auto_now=True)
     slug = models.SlugField(default="", blank=True, null=False, db_index=True)
 
-    def save(self, args, **kwargs):
+    def save(self, *args, **kwargs):
       self.slug = slugify(self.Subject)
-      super().save(args, **kwargs)
+      super().save(*args, **kwargs)
 
     # Returns
     def __str__(self):
         return self.Subject
+
+# Cart Class
+class Cart(models.Model):
+    Customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True, blank=True)
+    Count = models.PositiveIntegerField(default=0)
+    Subtotal = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)
+    Order = models.OneToOneField(Order, on_delete=models.CASCADE, null=True, blank=True)
+    Session = models.CharField(max_length=100, null=True)
+    def str(self):
+        return "Welcome, {}. You have {} items in your cart. Subtotal: {}".format(self.Customer, self.Count, self.Subtotal)
+
+# Cart Product Class
+class CartProduct(models.Model):
+  Product = models.ForeignKey(Product, on_delete=models.CASCADE)
+  Cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+  Quantity = models.PositiveIntegerField()
+  def __str__(self):
+    return str(self.Product.Name + ': ' + str(self.Quantity))

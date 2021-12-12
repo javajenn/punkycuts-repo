@@ -2,13 +2,11 @@
 <!DOCTYPE html>
 <html>
 {% block title %}
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 {% endblock%}
 {%block content%}
 <body>
-<div
-id="myChart" style="width:100%; max-width:600px; height:500px;">
-</div>
+<div id="PunkyPieChart" style="width: 900px; height: 500px;"></div>
+<div id="PunkyBarChart" style="width: 900px; height: 500px;"></div>
 
 <script>
 google.charts.load('current', {'packages':['corechart']});
@@ -16,22 +14,46 @@ google.charts.setOnLoadCallback(drawChart);
 
 function drawChart() {
 var data = google.visualization.arrayToDataTable([
-  ['Products Sold', 'Dollars'],
-  ['Mugs',{{MugCount}}],
-  ['TShirts',{{TShirtCount}}],
-  ['Bags',{{BagCount}}],
-  ['Onesies',{{OnesieCount}}],
+  ['Products Sold', 'Quantity'],
+  {% for c in countContext.items %}
+  ['{{ c.0 }}', {{ c.1}}],
+  {% endfor %}  
 ]);
 
 var options = {
-  title:'Punky Cuts Product Distrubition',
-  colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6']
+  title:'Punky Cuts Products Sold',
+  colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6', '#fa8072']
 };
 
-var chart = new google.visualization.PieChart(document.getElementById('myChart'));
+var chart = new google.visualization.PieChart(document.getElementById('PunkyPieChart'));
   chart.draw(data, options);
 }
 </script>
+
+<script>
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawBarChart);
+  
+  function drawBarChart() {
+  var data = google.visualization.arrayToDataTable([
+    ['Gross & Taxed Sales', 'Gross (Dollars)', 'Taxed (Dollars)'],
+    ['Weekly',{{GrossWeeklySales}}, {{TaxedWeeklySales}}],
+    ['Montly',{{GrossMonthlySales}}, {{TaxedMonthlySales}}],
+    ['Annual', {{GrossAnnualSales}}, {{TaxedAnnualSales}}],
+    
+  ]);
+  
+  var options = {
+    title:'Punky Cuts Sales Report',
+    colors: ['#e0440e', '#f6c7b6', '#e0440e', '#f6c7b6', '#e0440e', '#f6c7b6'],
+    hAxis: {minValue: 0}
+  };
+  
+  var chart = new google.visualization.BarChart(document.getElementById('PunkyBarChart'));
+    chart.draw(data, options);
+  }
+  </script>
+
 {%endblock%}
 </body>
 </html>

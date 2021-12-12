@@ -1,0 +1,43 @@
+{% extends "store_index/base.html" %}
+{% load static %}
+{% load store_extras %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        
+        {% block head %}
+        <title>Administrator Dashboard</title>
+        <style>
+            .adminBtns>button:hover {
+                background-color:grey;
+            }
+        </style>
+        {% endblock %}
+
+    </head>
+    <body>
+    {% block content %}
+
+        <div class="container text-center mt-3">
+            <div class="row justify-content-center">
+                <div class="col-12 d-flex flex-column justify-content-center">
+                   <h1>Administrator Dashboard</h1>
+                    <div class="mt-2 adminBtns">
+                        <button class="btn border col-3 p-2">Database Admin</button>
+                        <button class="btn border col-3 mx-3 p-2">View Reports</button>
+                        <button class="btn border col-3 p-2">Close Site</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <!--View Products, View Orders, Compose Newletter-->
+            </div>
+
+        </div>
+
+    {% endblock %}
+    </body>
+</html>

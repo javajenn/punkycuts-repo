@@ -3,38 +3,76 @@
 
 {% block head %}
     <title>Punky-Products</title>
+    <style>
+    .card-hover:hover {
+        box-shadow: 4px 8px 8px 6px #D9D0CB; 
+    }
+
+
+    @media only screen and (min-width: 768px) {
+        .cardImage {height:30vh!important;}
+    } 
+    </style>
 {% endblock %}
 
 {% block content %}
-    <section class="product-list">
-            {% for product in products %}
-                {% comment %} {% if  %} {% endcomment %}
-                    <a class="card" href="{% url 'product_details' product.slug %}">
-                    {% comment %} {{ product.get_absolute_url }} {% endcomment %}
-                        {% for image in images %}
-                            {% if image.Product_id == product.id %}
-                                <img src="{{ image.Picture.url }}" class="card-img-top" alt="bubbly shirt">
+    <div class="container col-12 mt-3">
+        <div class="row text-center justify-content-center">
+        <h2>All Products</h2>
+            <div class="d-flex flex-wrap justify-content-center">
+                {% for p in products %}
+                <div class="col-xs-12 col-sm-12 col-md-5 col-lg-3 mx-2 my-3">
+                    <div class="card card-hover" style="overflow:hidden;">
+                        {% for image in p.images %}
+                            {% if forloop.first %}
+                                <a href="{% url 'product_details' p.slug %}"><img src="{{ image.Picture.url }}" width="{{image.Picture.width}} height="{{image.Picture.height}}" style="object-fit:cover!important;" class="cardImage card-img-top img-fluid"></a>
                             {% endif %}
                         {% endfor %}
                         <div class="card-body">
-                            <h5 class="card-title">{{ product.productName }}</h5>
-                            <p class="card-text">Price: ${{ product.price }}</p>
-                            <p class="card-text">Click for details</p>
+                            <a class="text-decoration-none" href="{% url 'product_details' p.slug %}"><h5 class="card-title">{{ p.Name }}</h5></a>
+                            <p class="card-text text-muted"><small>${{ p.Price }} | {{ p.Status }}</small></p>
                         </div>
-                        <div class="card-footer">
-                            <small class="text-muted">{{ product.quantity }} Left in Stock!</small>
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">Categories for product:</small><br>
-                            {% for category in product.categories %}
-                            <small class="text-muted">{{ category }}</small><br>
+                        {% comment %} <div class="card-footer">
+                            <small class="text-muted">{{ p.Status }}</small>
+                            <small class="d-block text-muted">Categories for product:</small><br>
+                            {% for category in p.categories %}
+                                <small class="text-muted">{{ category }}</small><br>
                             {% endfor %}
-                        </div>
-                    </a>
-                {% comment %} {% endif %} {% endcomment %}
-            {% endfor %}
-        </section>
+                        </div> {% endcomment %}
+                    </div>
+                </div>
+                {% empty %}
+                    <p class="mt-4 fs-4">There aren't any products in this category right now!</p>
+                {% endfor %}
 
+                {% comment %} <div class="">
+                    {% for p in products %}
+                        <div class="card col-4 p-0 d-inline-block">
+                            {% for image in images %}
+                                {% if image.Product_id == p.id %}
+                                    <img src="{{ image.Picture.url }}" style="max-width:25vw;" class="card-img-top img-fluid" alt="bubbly shirt">
+                                {% endif %}
+                            {% endfor %}
+                            <div class="card-body w-100">
+                                <h5 class="card-title">{{ p.Name }}</h5>
+                                <p class="card-text">Price: ${{ p.Price }}</p>
+                                <a href="{% url 'product_details' p.slug %}" class="card-text">Click for details</a>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">{{ p.Quantity }} Left in Stock!</small>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">Categories for product:</small><br>
+                                {% for category in p.categories %}
+                                <small class="text-muted">{{ category }}</small><br>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div> {% endcomment %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 

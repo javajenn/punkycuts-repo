@@ -21,7 +21,7 @@
         {% set_breakpoint %} {% endcomment %}
         {% if distance > 0 %}
         <div class="alert alert-warning alert-dismissible d-flex justify-content-center" id="zipCodeAlert" role="alert">
-            {% if distance > 50 %}
+            {% if distance > 200 %}
                 <p>Sorry, we don't ship to you. Cart feature disabled.</p>
             {% elif distance == .0123 or distance == '' %}
                 <p><strong>Zip code not recognized. Please be aware Punky Cuts may not ship to your location!</strong></p>
@@ -31,6 +31,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endif %}
+        <img class="img-fluid w-100" src="{% static 'newsletter.png' %}" style="border-radius:8px;">
         <div class="container">
             <div class="row">
                 <div id="carouselHomepage" class="vh-50 carousel slide col-12 d-flex justify-content-center" data-bs-ride="carousel">
@@ -105,6 +106,10 @@
     
         <script>
             $(document).ready(function(){
+                if (sessionStorage.getItem('checkout-redirect') == 'true') {
+                    // now redirect back to checkout
+                    window.location.replace('{% url 'checkout' %}');
+                 }
                // $("#myModal").modal('show');
                //$("#zipCodeAlert").fadeOut(10000);
             });
@@ -122,6 +127,14 @@
                 $('#zipCodeAlert').alert('close')
             }, 12000)
         });
+        </script>
+        <script>
+      //      $(document).ready(function(){
+      //          if (sessionStorage.getItem('checkout-redirect') == 'true') {
+      //             // now redirect back to checkout
+      //             window.location.replace('{% url 'checkout' %}');
+      //          }
+      //      });
         </script>
         {% endif %}
         {% endblock %}

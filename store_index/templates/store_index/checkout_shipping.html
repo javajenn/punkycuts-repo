@@ -1,0 +1,21 @@
+{% extends 'store_index/base.html' %}
+{% load static %}
+
+{% block head %}
+    <title>Shipping Information</title>
+{% endblock %}
+
+{% block content %}
+
+    <h1>Shipping Information</h1>
+    {% if user.is_authenticated %}
+        
+    {% else %}
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit">
+        </form>
+    {% endif %}
+
+{% endblock %}

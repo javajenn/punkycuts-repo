@@ -52,6 +52,7 @@
             color: rgba(255,255,255,0.75);
         }
         .notification{
+            z-index: 2;
             position: absolute;
             top: 1rem;
             left: 1rem;
@@ -59,7 +60,15 @@
         .writeTableStyle td{
             padding: 5px;
         }
+        .table td.noborder,
+        .table th.noborder {
+            border-bottom: 0;
+        }
+        .remove-cart-prd {
+            background: url('{% static '/remove.png' %}')
+        }
         </style>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
         <script
             src="https://code.jquery.com/jquery-3.6.0.js"
@@ -96,7 +105,7 @@
                                         <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
                                     </ul>
                                 </div>
-                                <button type="button" class="btn btn-dark shadow-sm" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">Cart</button>
+                                <button type="button" id="btnCart" class="btn btn-dark shadow-sm" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">Cart</button>
                             </div>
                             <a href="/" title="Home" class="stretched-link"></a>
                         </div>
@@ -108,27 +117,33 @@
                                 <span class="navbar-toggler-icon"></span>
                             </button>
                             <div class="collapse navbar-collapse justify-content-center" id="navbarGlobal">
-                                <ul class="navbar-nav">
+                                <ul class="navbar-nav p-1">
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#">New Arrivals</a>
+                                        <a class="nav-link" href="{% url 'products' %}">All Products</a>
                                     </li>
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" id="navbardropSeasonal" role="button" data-bs-toggle="dropdown" aria-expanded="false">Seasonal</a>
                                         <ul class="dropdown-menu" aria-labelledby="navbardropSeasonal">
-                                            <li><a class="dropdown-item" href="{% url 'products' 'cicadas' %}">Cicadas</a></li>
                                             <li><a class="dropdown-item" href="{% url 'products' 'fall' %}">Fall</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'winter' %}">Winter</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'cicadas' %}">Cicadas</a></li>
                                         </ul>
                                     </li>
                                     <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" id="navbardropOccasions" role="button" data-bs-toggle="dropdown" aria-expanded="false">Occasions</a>
-                                        <ul class="dropdown-menu" aria-labelledby="navbardropOccasions">
-                                            <li><a class="dropdown-item" href="{% url 'products' 'baby-shower' %}">Baby Shower</a></li>
-                                            <li><a class="dropdown-item" href="{% url 'products' 'birthday' %}">Birthday</a></li>
-                                            <li><a class="dropdown-item" href="{% url 'products' 'wedding' %}">Wedding</a></li>
+                                        <a class="nav-link dropdown-toggle" href="#" id="navbardropThemes" role="button" data-bs-toggle="dropdown" aria-expanded="false">Themes</a>
+                                        <ul class="dropdown-menu" aria-labelledby="navbardropThemes">
+                                            <li><a class="dropdown-item" href="{% url 'products' 'food' %}">Food</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'diy' %}">DIY</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'womens-empowerment' %}">Women's<br>Empowerment</a></li>
                                         </ul>                               
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{% url 'all_products' %}">All Products</a>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="navbardropTypes" role="button" data-bs-toggle="dropdown" aria-expanded="false">Product Types</a>
+                                        <ul class="dropdown-menu" aria-labelledby="navbardropTypes">
+                                            <li><a class="dropdown-item" href="{% url 'products' 'womens-empowerment' %}">T-Shirts</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'food' %}">Bags</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'diy' %}">Drinkware</a></li>
+                                        </ul>                               
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{% url 'customize' %}">Customize</a>
@@ -148,9 +163,9 @@
                     </nav>
                 </div>
                 {% for message in messages %}
-                    <div class="toast notification bg-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
+                    <div id="toastNotif" role="alert" class="toast notification bg-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="8000">
                         <div class="toast-header">
-                        <strong class="mr-auto">
+                        <strong class="me-auto">
                             {% if message.tags == 'error' %}
                             <i class="fas fa-times mr-2"></i>
                             {% elif message.tags == 'warning' %}
@@ -162,8 +177,7 @@
                             {% endif %}
                             {{message.tags|capfirst}}
                         </strong>
-                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close">
                         </button>
                         </div>
                         <div class="toast-body">
@@ -179,18 +193,50 @@
                             <h5 class="mx-auto" id="cartOffcanvasLabel">Shopping Cart</h5>
                             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                         </div>
-                        <div class="offcanvas-body">
-                            <div class="row">
-                                <div class="col-12 d-flex justify-content-center">
-                                    You <br><br><br>don't<br> have <br><br><br><br><br><br><br><br>items in 
-                                    <br><br><br><br><br><br><br><br><br><br>your cart yet.
-                                    <br><br><br><br><br><br><br><br><br><br><br><br><br> Add some!
+                        <div class="offcanvas-body text-center justify-content-center">
+                            <div class="row d-flex flex-column">
+                                <div class="col-12 justify-content-center" id="cartContainer">
+                                    {% if globalCart is not None %}
+                                        <table class="table align-middle">
+                                        {% for p in globalCart  %}
+                                            <tr id="cartRow{{p.Product.id}}">
+                                                <td class="align-middle"><img class="img-fluid" style="width:110px;object-fit:cover;" src="{{p.images.first.Picture.url}}"></td>
+                                                <td colspan="2" class="align-middle">
+                                                    <span class="d-inline-block">{{p.Product.Name}}
+                                                    {% if p.Product.Type.Product_Type == 'T-Shirt' %}
+                                                    <small class="d-block">Size: {{p.Product.Size.Product_Size}}</small>
+                                                    {% endif %}
+                                                    </span>
+                                                </td>
+                                                <td class="pe-0">
+                                                    <select class="align-middle" name="quantityDropdown{{p.Product.id}}" id="quantityDropdown{{p.Product.id}}" onchange="updateCartQuantity(event)">
+                                                        {% for n in maxPerProduct %}
+                                                        <option value="{{n}}" {% if p.Quantity == n %} selected {% endif %}>{{n}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </td>
+                                                <td class="p-0 align-top" style="position:relative;margin-left:-10px;">
+                                                    {% comment %} <button type="button" class="remove-cart-prd" data-bs-dismiss="toast" aria-label="Close"> {% endcomment %}
+                                                    <img id="cartRemove{{p.Product.id}}" title="Remove product from cart" onclick="removeFromCart(event)" role="button" style="position:relative;width:20px;height:20px;" src="{% static '/remove.png' %}">
+                                                </td>
+                                            </tr>
+                                            {% comment %} {% if p.Product.Type.Product_Type == 'T-Shirt' %}
+                                            <tr>
+                                                <td><small class="pb-5 m">Size: </small></td>
+                                            </tr> 
+                                            {% endif %} {% endcomment %}
+                                        {% endfor %}
+                                        </table>
+                                    {% else %}
+                                    <p>No items in your cart. Add some!</p>    
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                         <div class="offcanvas-footer my-3 center-block">
-                            <div class="col-12 d-flex justify-content-center">
-                                <button class=" mx-auto btn btn-dark shadow-sm">Checkout</button>
+                            <div class="col-12 d-flex flex-column justify-content-center">
+                                <h5 id="cartSubtotal" class="mb-2 d-block text-center {% if globalCart is None %} opacity-50 {% endif %}">Subtotal: {% if globalCart is not None %} ${{globalCart.cart.Subtotal|floatformat:2}} {% else %} $0.00 {% endif %}</h5>
+                                <button id="checkoutBtn" class="d-block mx-auto btn btn-dark shadow-sm" {% if globalCart is None %} disabled {% endif %}}>Checkout</button>
                             </div>
                         </div>
                     </div>
@@ -213,13 +259,75 @@
                 </div>
             </footer>
         </div>
+        <script>
+            $(document).ready(function() {
+                if (sessionStorage.getItem('cart-reload') == 'true') {
+                    $('#btnCart').trigger('click');
+                    sessionStorage.setItem('cart-reload', 'false');
+                }
+            });
+
+            function updateCartQuantity(event) {
+                p_id = event.target.name.slice(16)
+
+                //p_id = 
+                //console.log(id)
+                $.post('{% url "handlecart" %}', 
+                    {
+                        quantity: event.target.value, 
+                        csrfmiddlewaretoken: '{{ csrf_token }}', 
+                        productid: p_id
+                    },
+                    function(data) {
+                        if (data.subtotal > -1) {
+                            let subtotal = 'Subtotal: $' + data.subtotal;
+                            let div = document.getElementById('cartSubtotal')
+                            div.innerHTML = subtotal;
+                        }
+                    }
+                )
+            }
+
+            function removeFromCart(event) {
+                p_id = event.target.id.slice(10)
+                console.log(event, p_id);
+
+                $.post('{% url "handlecart" %}',
+                    {
+                        csrfmiddlewaretoken: '{{ csrf_token }}', 
+                        removeProd: p_id
+                    },
+                    function(data) {
+                        console.log("event",event, "P_id", p_id);
+                        let sel = '#' + event.target.id;
+                        $(sel).slideUp(1300);
+                        sel = '#' + event.target.parentElement.parentElement.id;
+                        $(sel).fadeOut(2100);
+                        //setTimeout(function(){sessionStorage.setItem('cart-reload', 'true');location.reload();},3000)
+                        if (data.subtotal > -1) {
+                            if (data.subtotal == 0 || data.subtotal == '0.00') {
+                                let checkout = document.getElementById('checkoutBtn');
+                                checkout.setAttribute('disabled', '');
+                                let subt = document.getElementById('cartSubtotal');
+                                subt.classList.add('opacity-50');
+                                let p = document.createElement("p");
+                                p.innerText = 'No items in your cart. Add some!';
+                                let container = document.getElementById('cartContainer');
+                                container.appendChild(p);
+                            }
+                            let subtotal = 'Subtotal: $' + data.subtotal;
+                            let div = document.getElementById('cartSubtotal')
+                            div.innerHTML = subtotal;
+                        }
+                    }
+                )
+            }
+        </script>
         {% if messages %}
             <script>
-                {% for message in messages %}
                     $(document).ready(function () {
                         $('.toast').toast('show');
                     });
-                {% endfor %}
             </script>
             <script type="text/javascript">DJANGO_STATIC_URL = '{{ STATIC_URL }}';</script>
         {% endif %}

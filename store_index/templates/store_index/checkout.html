@@ -1,0 +1,59 @@
+{% extends "store_index/base.html" %}
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="data:,">
+        
+        
+        {% block head %}
+        <title>Index</title>
+        {% endblock %}
+
+    </head>
+
+    <body>
+        {% block content %}
+
+        <div class="container text-center mt-3">
+            <div class="row justify-content-center">
+                <div class="col-12 d-flex flex-column justify-content-center">
+                    <h1>Checkout</h1>
+                    <div>
+                        {% if user.is_authenticated %}
+                        Hellooo user~ We already have your info! :K
+
+                        {% else %}
+                        <p>First, choose an option: </p>
+                        <button onclick="handleSignin()" class="btn btn-primary px-5 py-2 me-1">Sign in</button>
+                        <button onclick="handleSignup()" class="btn btn-primary px-5 py-2 ms-1">Sign up</button><br>
+                        <button class="btn btn-primary px-5 py-2 mt-3">Guest checkout</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function(){
+                if (sessionStorage.getItem('checkout-redirect-signin') == 'true') {
+                    // delete the session var that tells us when a user was redirected
+                    sessionStorage.setItem('checkout-redirect-signin', 'false');
+                }
+                if (sessionStorage.getItem('checkout-redirect-signup') == 'true') {
+                    // delete the session var that tells us when a user was redirected
+                    sessionStorage.setItem('checkout-redirect-signup', 'false');
+                }
+            });
+            function handleSignin() {
+                sessionStorage.setItem('checkout-redirect-signin', 'true');
+                window.location.href = '{% url 'login' %}';
+            }
+            function handleSignup() {
+                sessionStorage.setItem('checkout-redirect-signup', 'true');
+                window.location.href = '{% url 'signup' %}';
+            }
+
+        </script>
+        {% endblock %}
