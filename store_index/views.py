@@ -34,7 +34,6 @@ from django.views.decorators.csrf import csrf_exempt
 from postman.forms import WriteForm
 from django.forms.models import model_to_dict
 from django.core import serializers
-from dateutil.relativedelta import relativedelta
 
 # Create your views here.
 def index(request):
