@@ -186,12 +186,13 @@ def notify_user(object, action, site):
             email('postman/email_user_subject.txt', 'postman/email_user', [email_address], object, action, site)
             message = ('You have received this message from the administrator at Punky Cuts:\n\n' + sentMsgBody + '\n\nYou may reply to this message with your response or navigate to our website.')
             client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-            if msgWriter.customer.PhoneNumber:
-                recipient = user.customer.PhoneNumber
-                recipient = recipient.replace('(','')
-                recipient = recipient.replace(')', '')
-                recipient = recipient.replace('-', '')
-                recipient = recipient.replace(' ', '')
-                recipient = '+1' + recipient
-                client.messages.create(to=recipient, from_=settings.TWILIO_NUMBER, body=message)
+            if not msgWriter.is_staff:
+                if msgWriter.customer.PhoneNumber:
+                    recipient = user.customer.PhoneNumber
+                    recipient = recipient.replace('(','')
+                    recipient = recipient.replace(')', '')
+                    recipient = recipient.replace('-', '')
+                    recipient = recipient.replace(' ', '')
+                    recipient = '+1' + recipient
+                    client.messages.create(to=recipient, from_=settings.TWILIO_NUMBER, body=message)
             
