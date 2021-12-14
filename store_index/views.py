@@ -535,7 +535,7 @@ def NewsletterSignUp(request):
         'Form': Form,
     }
 
-    Template = "app/templates/SignUp.html"
+    Template = "store_index/newsletterSignup.html"
 
     # Returns
     return render(request, Template, Context)
@@ -568,7 +568,7 @@ def NewsletterUnsubscribe(request):
         'Form': Form,
     }
 
-    Template = "app/templates/Unsubscribe.html"
+    Template = "store_index/unsubscribe.html"
 
     # Returns
     return render(request, Template, Context)
@@ -596,13 +596,27 @@ def ControlNewsletter(request):
             'Form': Form,
         }
 
-        Template = "app/templates/WriteNewsletter.html"
+        Template = "store_index/writeNewsletter.html"
 
         # Returns
         return render(request, Template, Context)
     
 def checkout(request):
-    return render(request, 'store_index/checkout.html')
+    context = {}#{'guest': 'false'}
+    try:
+        cust = request.user.customer
+        shipForm = ShippingForm(instance=cust)
+    except Customer.DoesNotExist:
+        shipForm = ShippingForm()
+    context.update({'shipForm':shipForm})
+
+    if request.method == 'POST':
+        guest = request.POST.get('guest') 
+        if guest == 'true':
+            context.update({'guest': 'true'})
+    
+    cartFunct(request)
+    return render(request, 'store_index/checkout.html', context)
 
 def financial(request):    
     # Statistic Reports
@@ -768,3 +782,6 @@ def financial(request):
     }
 
     return render( request, 'store_index/reports.html', context)
+
+def billing(request):
+    return render(request, 'store_index/billing.html')
