@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import RegexValidator
+from django.db.models.fields.related import ForeignKey
 from django.urls import reverse 
 from django.utils.text import slugify
 
@@ -102,7 +103,7 @@ class Product(models.Model):
     slug = models.SlugField(default="", blank=True, null=False, db_index=True) #T-shirt-1 => t-shirt-1
     Product_Categories = models.ManyToManyField(Category)
     #Order = models.ManyToManyField(Order)
-    Size = models.ForeignKey(Size, on_delete=models.CASCADE, null=True, blank=True)
+    Sizes = models.ManyToManyField(Size)
     #Color = ?
     def save(self, *args, **kwargs):
       self.slug = slugify(self.Name)
@@ -127,8 +128,9 @@ class Product(models.Model):
 class OrderProduct(models.Model):
     Order = models.ForeignKey(Order, on_delete=models.CASCADE, null=False)
     Product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False)
-    Price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    Price = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True, blank=True)
     Quantity = models.PositiveIntegerField(default=1)
+    Size = ForeignKey(Size, on_delete=models.CASCADE, null=True, blank=True)
     #Subtotal = models.
     def __str__(self):
       return f"ORDERID: {self.Order.id} PRODUCT: {self.Product}"
@@ -147,6 +149,8 @@ class Image(models.Model):
     Picture = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100)
     DateAdded = models.DateTimeField(auto_now=True, auto_created=True, editable=False)
     Product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False)
+    def __str__(self):
+      return f"{self.FileName}"
 
 class Screenshot(models.Model):
     screenshot = models.ImageField(upload_to='img/screenshots/', help_text='Html2canvas screenshot')
@@ -203,5 +207,11 @@ class CartProduct(models.Model):
   Product = models.ForeignKey(Product, on_delete=models.CASCADE)
   Cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
   Quantity = models.PositiveIntegerField()
+  Size = models.ForeignKey(Size, on_delete=models.CASCADE, null=True, blank=True)
   def __str__(self):
     return str(self.Product.Name + ': ' + str(self.Quantity))
+
+class Inventory(models.Model):
+  Product = models.ForeignKey(Product, on_delete=models.CASCADE)
+  Size = models.ForeignKey(Size, on_delete=models.CASCADE)
+  Quantity = models.PositiveIntegerField()
