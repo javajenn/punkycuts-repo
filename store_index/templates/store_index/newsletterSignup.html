@@ -4,12 +4,12 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-6 col-lg-offset-3">
-            <h3 class="text-center">Subscribe to our newletter today.</h3>
-            <form method="POST">{% csrf_token %}
-                <div class="input-group">
-                {{ Form }}
+            <h5 class="text-center">Enter your email here to subscribe to our newletter today.</h5>
+            <form method="POST">{% csrf_token %}                
+                <div class="input-group ms-2">
+                {{ Form.as_p }}               
                     <span class="input-group-btn">
-                        <button class="btn btn-default" type="submit">Subscribe</button>
+                        <button class=" mx-auto btn btn-dark shadow-sm" type="submit" padding-left: 150px;>Subscribe</button>                      
                     </span>
                 </div>
             </form>

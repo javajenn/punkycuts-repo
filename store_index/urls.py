@@ -23,5 +23,6 @@ urlpatterns = [
     path('newsletter/unsubscribe', views.NewsletterUnsubscribe, name='news_unsub'),
     path('newsletter/write', views.ControlNewsletter, name='news_write'),
     path('checkout/', views.checkout, name='checkout'),
-    path('reports/', views.financial, name='reports')
+    path('reports/', views.financial, name='reports'),
+    path('checkout/billing/', views.billing, name='billing')
 ]

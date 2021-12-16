@@ -606,7 +606,7 @@ def checkout(request):
     try:
         cust = request.user.customer
         shipForm = ShippingForm(instance=cust)
-    except Customer.DoesNotExist:
+    except:
         shipForm = ShippingForm()
     context.update({'shipForm':shipForm})
 

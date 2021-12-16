@@ -1,6 +1,6 @@
 {% extends "store_index/base.html" %}
 {# not myself but a site-level one (TEMPLATE_DIRS setting) #}
-{% load i18n static %}{% load postman_tags %} 
+{% load i18n static %}{% load postman_tags %}
 {% block title %}{% trans "Messaging" %}{% endblock %}
 {% block extrahead %}{{ block.super }}
 <link type="text/css" media="all" rel="stylesheet" href="{% static 'postman/css/postman.css' %}">

@@ -353,7 +353,7 @@
         </script>
         <script>
             $(document).ready(function(){
-                if (sessionStorage.getItem('checkout-redirect-signup') == 'true' || sessionStorage.getItem('checkout-redirect-signin')) {
+                if (sessionStorage.getItem('checkout-redirect-signup') == 'true' || sessionStorage.getItem('checkout-redirect-signin') == 'true') {
                    // now redirect back to checkout
                    window.location.replace('{% url 'checkout' %}');
                 }

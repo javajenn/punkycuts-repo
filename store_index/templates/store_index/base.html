@@ -261,6 +261,7 @@
         </div>
         <script>
             $(document).ready(function() {
+                console.log(sessionStorage);
                 if (sessionStorage.getItem('cart-reload') == 'true') {
                     $('#btnCart').trigger('click');
                     sessionStorage.setItem('cart-reload', 'false');
@@ -288,40 +289,6 @@
                 )
             }
 
-            function removeFromCart(event) {
-                p_id = event.target.id.slice(10)
-                console.log(event, p_id);
-
-                $.post('{% url "handlecart" %}',
-                    {
-                        csrfmiddlewaretoken: '{{ csrf_token }}', 
-                        removeProd: p_id
-                    },
-                    function(data) {
-                        console.log("event",event, "P_id", p_id);
-                        let sel = '#' + event.target.id;
-                        $(sel).slideUp(1300);
-                        sel = '#' + event.target.parentElement.parentElement.id;
-                        $(sel).fadeOut(2100);
-                        //setTimeout(function(){sessionStorage.setItem('cart-reload', 'true');location.reload();},3000)
-                        if (data.subtotal > -1) {
-                            if (data.subtotal == 0 || data.subtotal == '0.00') {
-                                let checkout = document.getElementById('checkoutBtn');
-                                checkout.setAttribute('disabled', '');
-                                let subt = document.getElementById('cartSubtotal');
-                                subt.classList.add('opacity-50');
-                                let p = document.createElement("p");
-                                p.innerText = 'No items in your cart. Add some!';
-                                let container = document.getElementById('cartContainer');
-                                container.appendChild(p);
-                            }
-                            let subtotal = 'Subtotal: $' + data.subtotal;
-                            let div = document.getElementById('cartSubtotal')
-                            div.innerHTML = subtotal;
-                        }
-                    }
-                )
-            }
         </script>
         {% if messages %}
             <script>

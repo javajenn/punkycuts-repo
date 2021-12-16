@@ -104,16 +104,6 @@
             </div>
         </div>
     
-        <script>
-            $(document).ready(function(){
-                if (sessionStorage.getItem('checkout-redirect') == 'true') {
-                    // now redirect back to checkout
-                    window.location.replace('{% url 'checkout' %}');
-                 }
-               // $("#myModal").modal('show');
-               //$("#zipCodeAlert").fadeOut(10000);
-            });
-        </script>
         {% if user.is_authenticated == False %}
         <script type="text/javascript">
         $(document).ready(function() {
@@ -127,14 +117,6 @@
                 $('#zipCodeAlert').alert('close')
             }, 12000)
         });
-        </script>
-        <script>
-      //      $(document).ready(function(){
-      //          if (sessionStorage.getItem('checkout-redirect') == 'true') {
-      //             // now redirect back to checkout
-      //             window.location.replace('{% url 'checkout' %}');
-      //          }
-      //      });
         </script>
         {% endif %}
         {% endblock %}

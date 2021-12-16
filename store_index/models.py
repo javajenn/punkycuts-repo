@@ -4,6 +4,7 @@ from django.core.validators import RegexValidator
 from django.db.models.fields.related import ForeignKey
 from django.urls import reverse 
 from django.utils.text import slugify
+from datetime import datetime
 
 # Create your models here.
 class State(models.Model):
@@ -72,8 +73,8 @@ class Status(models.Model):
 
 class Order(models.Model):
     Customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=False)
-    Date = models.DateTimeField(auto_now=False, auto_now_add=False)
-
+    Date = models.DateTimeField(default=datetime.now, blank=True)
+    #(auto_now=False, auto_now_add=False)
     def __str__(self):
         return str("ORDERID: " + str(self.id) + " CUSTOMER: " + str(self.Customer))
 

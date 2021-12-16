@@ -72,3 +72,18 @@ class ShippingForm(forms.ModelForm):
         widgets = {
             #'Email': forms.EmailInput(attrs={'autofocus': ''}),
         }
+    def __init__(self, *args, **kwargs):
+        super(ShippingForm, self).__init__(*args, **kwargs)
+        self.fields['FirstName'].required = True
+        self.fields['LastName'].required = True
+        self.fields['Email'].required = True
+        self.fields['PhoneNumber'].required = True
+        self.fields['ShippingAddress'].required = True
+        self.fields['ShippingCity'].required = True
+        self.fields['ShippingZipCode'].required = True
+        self.fields['ShippingState'].required = True
+
+class BillingForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ("BillingAddress", "BillingCity", "BillingZipCode", "BillingState")
