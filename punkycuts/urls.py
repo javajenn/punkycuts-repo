@@ -22,7 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("store_index.urls")),
     #path('chat/', include('chat.urls')),
-    path('home/punkycuts/smessages/', include('postman.urls', namespace='postman')),
+    path('home/punkycuts/messages/', include('postman.urls', namespace='postman')),
     path('api-auth/', include('rest_framework.urls')),
     #path('^', include('cms.urls'))
     path('accounts/', include('django.contrib.auth.urls'))
