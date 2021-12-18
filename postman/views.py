@@ -108,7 +108,7 @@ class FolderMixin(NamespaceMixin, object):
         })
         return context
 
-@login_required
+#@login_required
 class InboxView(FolderMixin, TemplateView):
     """
     Display the list of received messages for the current user.

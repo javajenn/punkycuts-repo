@@ -88,6 +88,7 @@ Refer to documentation.
 """
 from django import VERSION
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 if VERSION < (2, 0):
     from django.conf.urls import include, url as re_path
 else:
@@ -106,7 +107,7 @@ from . import api_urls
 app_name = 'postman'
 urlpatterns = [
     # Translators: keep consistency of the <option> parameter with the translation for 'm'
-    re_path(pgettext_lazy('postman_url', r'^inbox/(?:(?P<option>m)/)?$'), InboxView.as_view(), name='inbox'),
+    re_path(pgettext_lazy('postman_url', r'^inbox/(?:(?P<option>m)/)?$'), login_required(InboxView.as_view()), name='inbox'),
     # Translators: keep consistency of the <option> parameter with the translation for 'm'
     re_path(pgettext_lazy('postman_url', r'^sent/(?:(?P<option>m)/)?$'), SentView.as_view(), name='sent'),
     # Translators: keep consistency of the <option> parameter with the translation for 'm'
