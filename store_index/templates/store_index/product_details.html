@@ -2,7 +2,13 @@
 {% load static %}
 
 {% block head %}
-    <title>Punky-Product</title>
+    <title>{{product.Name}}</title>
+    <style>
+        .carousel-inner {
+            max-height: 650px;
+            max-width: 750px;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -29,7 +35,7 @@
                 {% else %}
                 <div class="productImg">
                     {% for i in images %}
-                    <img src="{{ i.Picture.url }}" alt="{{ product.productName }}" title="{{ product.productName }}">
+                    <img src="{{ i.Picture.url }}" style="max-width:750px;" alt="{{ product.productName }}" title="{{ product.productName }}">
                     {% endfor %}
                 </div>
                 {% endif %}
@@ -43,8 +49,7 @@
                             {% endfor %}
                         </select>
                     {% endif %}                   
-                    <p class="d-inline-block">In Stock: {{ product.Quantity }}</p>
-                    <p>Price: {{ product.Price }}</p>
+                    <p>Price: ${{ product.Price }}</p>
                     <input type="hidden" id="prodToCart" name="prodToCart" value="{{product.id}}">
                     <button type="submit" id="add_to_cart" onclick="addToCart()">add to cart</button>
                     <button id="purchase_now">purchase now</button>

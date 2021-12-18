@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
 from django.http import Http404
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
@@ -19,6 +19,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import FormView, RedirectView, TemplateView, View
 from django.core.files.storage import FileSystemStorage
+
+from store_index.models import Customer
 
 from .fields import autocompleter_app
 from .forms import WriteForm, AnonymousWriteForm, QuickReplyForm, FullReplyForm
@@ -106,7 +108,7 @@ class FolderMixin(NamespaceMixin, object):
         })
         return context
 
-
+@login_required
 class InboxView(FolderMixin, TemplateView):
     """
     Display the list of received messages for the current user.
@@ -124,6 +126,18 @@ class InboxView(FolderMixin, TemplateView):
     view_name = 'inbox'
     # for TemplateView:
     template_name = 'postman/inbox.html'
+    def get(self, request):
+        userid = request.user.pk
+        try:
+            customer = Customer.objects.get(User_id=userid)
+        except Customer.DoesNotExist:
+            customer = None
+        if not customer.is_email_verified:
+            messages.add_message(request, messages.ERROR, 'Email is not verified. Please check inbox and spam folder.')
+            return redirect('index')
+        else:
+            context = super().get_context_data()
+            return render(request, self.template_name, context)
 
 
 class SentView(FolderMixin, TemplateView):

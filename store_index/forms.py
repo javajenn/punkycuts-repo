@@ -70,7 +70,10 @@ class ShippingForm(forms.ModelForm):
         model = Customer
         fields = ("FirstName", "LastName", "Email", "PhoneNumber", "ShippingAddress", "ShippingCity", "ShippingZipCode", "ShippingState")
         widgets = {
-            #'Email': forms.EmailInput(attrs={'autofocus': ''}),
+            'FirstName': forms.TextInput(attrs={'autofocus': ''}),
+            'Email': forms.EmailInput(),
+            'PhoneNumber': forms.TextInput(attrs={'id': 'phoneNum', 'onblur': 'phoneNumberFormatter()'}),
+            'ShippingZipCode': forms.TextInput(attrs={'maxlength':'5', 'id':'userZip'})
         }
     def __init__(self, *args, **kwargs):
         super(ShippingForm, self).__init__(*args, **kwargs)

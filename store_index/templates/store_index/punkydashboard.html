@@ -11,7 +11,7 @@
         {% block head %}
         <title>Administrator Dashboard</title>
         <style>
-            .adminBtns>button:hover {
+            .adminBtns>a:hover {
                 background-color:grey;
             }
         </style>
@@ -26,9 +26,9 @@
                 <div class="col-12 d-flex flex-column justify-content-center">
                    <h1>Administrator Dashboard</h1>
                     <div class="mt-2 adminBtns">
-                        <button class="btn border col-3 p-2">Database Admin</button>
-                        <button class="btn border col-3 mx-3 p-2">View Reports</button>
-                        <button class="btn border col-3 p-2">Close Site</button>
+                        <a class="btn border col-3 p-2" href="{% url 'admin:index' %}">Database Admin</a>
+                        <a class="btn border col-3 mx-3 p-2" href="{% url 'reports' %}">View Reports</a>
+                        <a class="btn border col-3 p-2" href="">Close Site</a>
                     </div>
                 </div>
             </div>

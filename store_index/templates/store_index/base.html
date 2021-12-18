@@ -100,12 +100,12 @@
                                     {% endif %}
                                     <ul class="dropdown-menu" aria-labelledby="accountDropdown">
                                         {% postman_unread as unread_count %}
-                                        <li><a class="dropdown-item" href="messages/inbox">Messages{% if unread_count %} <strong>({{ unread_count }})</strong>{% endif %}</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'postman:inbox' %}">Messages{% if unread_count %} <strong>({{ unread_count }})</strong>{% endif %}</a></li>
                                         <li><a class="dropdown-item" href="{% url 'profile' %}">Settings</a></li>
                                         <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
                                     </ul>
                                 </div>
-                                <button type="button" id="btnCart" class="btn btn-dark shadow-sm" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">Cart</button>
+                                <button type="button" id="btnCart" class="btn btn-dark shadow-sm {% if cartdisabled == 'true' %} d-none {% endif %}" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">Cart</button>
                             </div>
                             <a href="/" title="Home" class="stretched-link"></a>
                         </div>
@@ -217,7 +217,7 @@
                                                 </td>
                                                 <td class="p-0 align-top" style="position:relative;margin-left:-10px;">
                                                     {% comment %} <button type="button" class="remove-cart-prd" data-bs-dismiss="toast" aria-label="Close"> {% endcomment %}
-                                                    <img id="cartRemove{{p.Product.id}}" title="Remove product from cart" onclick="removeFromCart(event)" role="button" style="position:relative;width:20px;height:20px;" src="{% static '/remove.png' %}">
+                                                    <img id="cartRemove{{p.Product.id}}" title="Remove product from cart" onclick="baseRemoveFromCart(event)" role="button" style="position:relative;width:20px;height:20px;" src="{% static '/remove.png' %}">
                                                 </td>
                                             </tr>
                                             {% comment %} {% if p.Product.Type.Product_Type == 'T-Shirt' %}
@@ -236,7 +236,7 @@
                         <div class="offcanvas-footer my-3 center-block">
                             <div class="col-12 d-flex flex-column justify-content-center">
                                 <h5 id="cartSubtotal" class="mb-2 d-block text-center {% if globalCart is None %} opacity-50 {% endif %}">Subtotal: {% if globalCart is not None %} ${{globalCart.cart.Subtotal|floatformat:2}} {% else %} $0.00 {% endif %}</h5>
-                                <button id="checkoutBtn" class="d-block mx-auto btn btn-dark shadow-sm" {% if globalCart is None %} disabled {% endif %}}>Checkout</button>
+                                <a id="checkoutBtn" class="d-block mx-auto btn btn-dark shadow-sm {% if globalCart is None %} disabled {% endif %}" href="{% url 'checkout' %}">Checkout</a>
                             </div>
                         </div>
                     </div>
@@ -288,7 +288,41 @@
                     }
                 )
             }
+            function baseRemoveFromCart(event) {
+                p_id = event.target.id.slice(10)
+                console.log(event, p_id);
 
+                $.post('{% url "handlecart" %}',
+                    {
+                        csrfmiddlewaretoken: '{{ csrf_token }}', 
+                        removeProd: p_id
+                    },
+                    function(data) {
+                        console.log("event",event, "P_id", p_id);
+                        let sel = '#' + event.target.id;
+                        $(sel).slideUp(1300);
+                        sel = '#' + event.target.parentElement.parentElement.id;
+                        $(sel).fadeOut(2100);
+                        //setTimeout(function(){sessionStorage.setItem('cart-reload', 'true');location.reload();},3000)
+                        if (data.subtotal > -1) {
+                            if (data.subtotal == 0 || data.subtotal == '0.00') {
+                                let checkout = document.getElementById('checkoutBtn');
+                                checkout.classList.add('disabled');
+                                console.log('CHECKOUT', checkout);
+                                let subt = document.getElementById('cartSubtotal');
+                                subt.classList.add('opacity-50');
+                                let p = document.createElement("p");
+                                p.innerText = 'No items in your cart. Add some!';
+                                let container = document.getElementById('cartContainer');
+                                container.appendChild(p);
+                            }
+                            let subtotal = 'Subtotal: $' + data.subtotal;
+                            let div = document.getElementById('cartSubtotal')
+                            div.innerHTML = subtotal;
+                        }
+                    }
+                )
+            }
         </script>
         {% if messages %}
             <script>

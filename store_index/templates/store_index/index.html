@@ -31,7 +31,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endif %}
-        <img class="img-fluid w-100" src="{% static 'newsletter.png' %}" style="border-radius:8px;">
+        <a href="{% url 'news_signup' %}"><img class="img-fluid w-100" src="{% static 'newsletter.png' %}" style="border-radius:8px;"></a>
         <div class="container">
             <div class="row">
                 <div id="carouselHomepage" class="vh-50 carousel slide col-12 d-flex justify-content-center" data-bs-ride="carousel">

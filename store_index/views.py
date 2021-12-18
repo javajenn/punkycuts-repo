@@ -100,7 +100,7 @@ def profile(request):
         #customer = 'staff'
         # pk = str(request.user.pk)
         # link = '/admin/auth/user/' + pk
-        return redirect('/punkydashboard')
+        return redirect('punkydashboard')
     else:    
         userid = request.user.pk
         user_form = UsernameEditForm(instance=request.user)
@@ -109,10 +109,6 @@ def profile(request):
             customer_form = CustomerEditForm(instance=customer)
         except Customer.DoesNotExist:
             customer = None
-
-    if not customer.is_email_verified:
-        messages.add_message(request, messages.ERROR, 'Email is not verified. Please check inbox and spam folder.')
-        return redirect('index')
 
     if request.method == 'POST':
         customer_form = CustomerEditForm(request.POST, instance=customer)
@@ -255,9 +251,11 @@ def products(request, cat=''):
     images = Image.objects.all()
     if cat != '':
         category = Category.objects.filter(Name=cat)
-        products = Product.objects.filter(Product_Categories__in=category)
+        products = Product.objects.filter(Product_Categories__in=category).order_by('Name')
+        heading = 'Category: ' + cat.capitalize()
     else:
-        products = Product.objects.all()
+        products = Product.objects.all().order_by('Name')
+        heading = 'All Products'
 
     for product in products:
         product.images = Image.objects.filter(Product=product)
@@ -281,7 +279,8 @@ def products(request, cat=''):
 
     return render(request, 'store_index/products.html', {
         "products": products,
-        "images": images
+        "images": images,
+        "heading": heading
     })
 
 def products_categories(request, cat):
@@ -614,8 +613,26 @@ def checkout(request):
         guest = request.POST.get('guest') 
         if guest == 'true':
             context.update({'guest': 'true'})
+        checkout = request.POST.get('approved')
+        status = request.POST.get('status')
+        if checkout == 'true' and status == 'COMPLETED':
+            # do checkout tings here.
+            data = json.loads(request.POST.get('data'))
+            adr1 = data['address_line_1']
+            if 'address_line_2' in data:
+                adr2 = data['address_line_2']
+            state = data['admin_area_1']
+            city = data['admin_area_2']
+            country = data['country_code']
+            zipcode = data['postal_code']
+
+    if 'zipcode' in request.session:
+        context.update({'zip':request.session['zipcode']})
+    else:
+        context.update({'zip':None})
     
     cartFunct(request)
+    context.update({'cartdisabled':'true'})
     return render(request, 'store_index/checkout.html', context)
 
 def financial(request):    
