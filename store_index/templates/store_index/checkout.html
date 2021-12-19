@@ -215,7 +215,9 @@
                         </form>
                     </div>
                     {% endif %}
-                    <div class="d-none" id="paypal-buttons"></div>
+                    <div class="d-none" id="paypal-buttons">
+                        <h3 class="text-center">Step 3: Payment</h3>
+                    </div>
                 </div>
             </div>
         </div>
@@ -254,6 +256,7 @@
 
             function showStep3() {
                 console.log('turn up');
+                debugger;
                 let div = document.getElementById('paypal-buttons');
                 if (div.classList.contains('d-none')) {
                     div.classList.remove('d-none');
@@ -495,7 +498,11 @@
                         }
                     });
                     });
-                }
+                },
+                onError: function (err) {
+                    sessionStorage.setItem('error', err)
+                    window.location.href = "{% url 'paymenterror' %}";
+                  }
             }).render('#paypal-buttons');
         </script>
         {% endblock %}

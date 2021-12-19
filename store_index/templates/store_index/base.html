@@ -126,36 +126,40 @@
                                         <ul class="dropdown-menu" aria-labelledby="navbardropSeasonal">
                                             <li><a class="dropdown-item" href="{% url 'products' 'fall' %}">Fall</a></li>
                                             <li><a class="dropdown-item" href="{% url 'products' 'winter' %}">Winter</a></li>
-                                            <li><a class="dropdown-item" href="{% url 'products' 'cicadas' %}">Cicadas</a></li>
                                         </ul>
                                     </li>
                                     <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" id="navbardropThemes" role="button" data-bs-toggle="dropdown" aria-expanded="false">Themes</a>
+                                        <a class="nav-link dropdown-toggle" href="#" id="navbardropThemes" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
                                         <ul class="dropdown-menu" aria-labelledby="navbardropThemes">
                                             <li><a class="dropdown-item" href="{% url 'products' 'food' %}">Food</a></li>
                                             <li><a class="dropdown-item" href="{% url 'products' 'diy' %}">DIY</a></li>
                                             <li><a class="dropdown-item" href="{% url 'products' 'womens-empowerment' %}">Women's<br>Empowerment</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'cicadas' %}">Cicadas</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'Sports' %}">Sports</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'local' %}">Local</a></li>
                                         </ul>                               
                                     </li>
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" id="navbardropTypes" role="button" data-bs-toggle="dropdown" aria-expanded="false">Product Types</a>
                                         <ul class="dropdown-menu" aria-labelledby="navbardropTypes">
-                                            <li><a class="dropdown-item" href="{% url 'products' 'womens-empowerment' %}">T-Shirts</a></li>
-                                            <li><a class="dropdown-item" href="{% url 'products' 'food' %}">Bags</a></li>
-                                            <li><a class="dropdown-item" href="{% url 'products' 'diy' %}">Drinkware</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 't-shirts' %}">T-Shirts</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'bags' %}">Bags</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'long-sleeves' %}">Long Sleeves</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'baby-onesies' %}">Baby Onesies</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'products' 'drinkware' %}">Drinkware</a></li>
                                         </ul>                               
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{% url 'customize' %}">Customize</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#">About Us</a>
+                                        <a class="nav-link" href="{% url 'aboutus' %}">About Us</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{% url 'smallbusiness' %}">Support Local Business</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#">Contact Us</a>
+                                        <a class="nav-link" href="{% url 'contactus' %}">Contact & FAQ</a>
                                     </li>
                                 </ul>
                             </div>

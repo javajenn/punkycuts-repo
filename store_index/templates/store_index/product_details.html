@@ -42,7 +42,7 @@
                 <div class="productInfo ms-5 text-center">
                     <h1>{{ product.Name }}</h1>
                     <p><i>{{ product.Description }}</i></p>
-                    {% if sizes is not None %}
+                    {% if sizes.count > 0 %}
                         Size:<select id="sizeDD" class="my-2 ms-2" name="sizeOptions">
                             {% for size in sizes %}
                             <option>{{size}}</option>
@@ -52,7 +52,10 @@
                     <p class="mt-3 fs-5">Price: ${{ product.Price }}</p>
                     <input type="hidden" id="prodToCart" name="prodToCart" value="{{product.id}}">
                     <div class="d-flex flex-column text-center justify-content-center">
-                        <input class="mt-2 mb-2 mx-auto btn btn-primary" type="submit" id="add_to_cart" onclick="addToCart()" value="Add To Cart">
+                        {% if product.Status.Description == 'Out of Stock' %}
+                        <p class="mb-0"><strong>Out of Stock</strong></p>
+                        {% endif %}
+                        <input class="mt-2 mb-2 mx-auto btn btn-primary {% if product.Status.Description == 'Out of Stock' %} d-none {% endif %}" type="submit" id="add_to_cart" onclick="addToCart()" value="Add To Cart">
                         {% if request.META.HTTP_REFERER is not None %}
                         <button id="backUrlBtn" role="button" class="mt-1 mx-auto d-block btn btn-primary" onclick="window.location.href='{{ request.META.HTTP_REFERER }}';">Back To Products</button>
                         {% endif %}

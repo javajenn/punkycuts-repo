@@ -102,7 +102,7 @@ class Product(models.Model):
     slug = models.SlugField(default="", blank=True, null=False, db_index=True) #T-shirt-1 => t-shirt-1
     Product_Categories = models.ManyToManyField(Category)
     #Order = models.ManyToManyField(Order)
-    Sizes = models.ManyToManyField(Size)
+    Sizes = models.ManyToManyField(Size, blank=True)
     #Color = ?
     def save(self, *args, **kwargs):
       self.slug = slugify(self.Name)

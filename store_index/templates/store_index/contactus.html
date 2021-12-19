@@ -1,0 +1,75 @@
+{% extends "store_index/base.html" %}
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="data:,">
+        
+        
+        {% block head %}
+        <title>Conact Us</title>
+        <style>
+ 
+            
+        </style>
+        {% endblock %}
+
+    </head>
+    <body>
+    {% block content %}
+
+    <div class="container mt-3">
+        <div class="row justify-content-center">
+            <div class="col-12 d-flex flex-column justify-content-center text-center">
+     
+                <h1>Contact us</h1>
+
+                <a href = "mailto:contactpunkycuts@gmail.com?subject=PunkyCuts order">
+                Contact us via our email</a>   or follow us on instagram at
+
+
+                <a href="https://www.instagram.com/punkycuts/" >punkycuts </a><br>                        
+                
+                <h2>FAQ</h2> 
+
+
+                <p>Q: How long does it take to complete an order?<br>
+                A: About a week. Please allow 3 to 5 business days for shipping as well.</p>
+
+                <p>Q: What locations do we ship to?<br>
+                A: We ship our products anywhere within a 200 mile radius of Cincinnati, 45202.</p>
+
+                <p>Q: What does 'Made to Order' mean?<br>
+                A: Made to Order means that we do not currently carry the product but will make it upon demand.</p>
+
+                <p>Q: What are the payment methods?<br>
+                A: We currently accept Venmo and Paypal.</p>
+
+                <p>Q: How many items can I request at a time?<br>
+                A: We ask that orders be kept to a maximum of 12 products.</p>
+
+                <p>Q: Why can't I access the site?<br>
+                A: Because we are a small business we occasionally turn off the site to catch up on orders. Check our social media for updates! Thank you for your understanding.</p>
+
+                <p>Q: What does customize do?<br>
+                A: Customize allows you to custom create a design with our websites drag and drop system. This image is then saved and sent to us so we can create your design.</p>
+
+                <p>Q: How does messaging work?<br>
+                A: Our website has its own messaging system for inquires about products. All messages go directly to the owner and you should recive an email upon reply.</p>
+
+                <p>Q: Do you have a newsletter?<br>     
+                A: Yes we do. You can <a href="https://punkycuts.pythonanywhere.com/newsletter/subscribe/" >Subscribe </a> to our newsletter.  If you wish to opt out of newsletter notification <a href="  https://punkycuts.pythonanywhere.com/newsletter/unsubscribe/" >Unsubscribe </a>.</p>
+                </p>                                         
+
+
+
+            </div>
+        </div>
+
+    </div>
+    {% endblock %}
+    </body>
+</html>

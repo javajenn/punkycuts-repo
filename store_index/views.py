@@ -250,34 +250,27 @@ def signup(request):
 
 
 def products(request, cat=''):
+    heading = ''
     images = Image.objects.all()
     if cat != '':
         category = Category.objects.filter(Name=cat)
-        products = Product.objects.filter(Product_Categories__in=category).order_by('Name')
-        heading = 'Category: ' + cat.capitalize()
+        try:
+            cat1 = Category.objects.get(Name=cat)
+            heading = 'Category: ' + cat1.Name
+        except:
+            pass
+        try:
+            products = Product.objects.filter(Product_Categories__in=category).order_by('Name')
+        except:
+            products = {}
+        if heading == '':
+            heading = "Can't find this category."      
     else:
         products = Product.objects.all().order_by('Name')
         heading = 'All Products'
 
     for product in products:
         product.images = Image.objects.filter(Product=product)
-
-
-    # products = Product.objects.all()
-    # product_values = Product.objects.all().values()
-    # images = Image.objects.all()
-    # output_products = []
-
-    # i = 0
-
-    # for product in products:
-    #     output_products.append(product_values[i])
-    #     categories = products[i].Product_Categories.all().values()
-    #     output_products[i]['categories'] = []
-    #     for category in categories:
-    #         output_products[i]['categories'].append(category['Name'])
-    #     i += 1
-
 
     return render(request, 'store_index/products.html', {
         "products": products,
@@ -755,14 +748,14 @@ def financial(request):
     context = {}
    
     ##inventory in STOCK
-    TShirtCount = Product.objects.filter(Name='T-Shirt')
-    LongSleeveShirtCount = Product.objects.filter(Name='Long Sleeve Shirt')
-    BabyOnesieCount = Product.objects.filter(Name='Baby Onesie')
-    MugCount = Product.objects.filter(Name='Mug')
-    BagCount = Product.objects.filter(Name='Bag')
-    WaterBottleCount=Product.objects.filter(Name='Water Bottle')   
-    ProductCount = Product.objects.all().aggregate(Sum('Quantity'))
-    ProductQ=ProductCount['Quantity__sum']
+    # TShirtCount = Product.objects.filter(Name='T-Shirt')
+    # LongSleeveShirtCount = Product.objects.filter(Name='Long Sleeve Shirt')
+    # BabyOnesieCount = Product.objects.filter(Name='Baby Onesie')
+    # MugCount = Product.objects.filter(Name='Mug')
+    # BagCount = Product.objects.filter(Name='Bag')
+    # WaterBottleCount=Product.objects.filter(Name='Water Bottle')   
+    # ProductCount = Product.objects.all().aggregate(Sum('Quantity'))
+    # ProductQ=ProductCount['Quantity__sum']
        
     ##sold items count
     pTypes = Type.objects.all()
@@ -873,14 +866,14 @@ def financial(request):
         GrossSales = 0
 
     context = {
-        'ProductCount': ProductCount,
-        'TShirtCount': TShirtCount,
-        'LongSleeveShirtCount' : LongSleeveShirtCount,
-        'BabyOnesieCount': BabyOnesieCount,
-        'MugCount': MugCount,  
-        'BagCount' : BagCount,
-        'WaterBottleCount': WaterBottleCount,
-        'ProductQ': ProductQ,
+        # 'ProductCount': ProductCount,
+        # 'TShirtCount': TShirtCount,
+        # 'LongSleeveShirtCount' : LongSleeveShirtCount,
+        # 'BabyOnesieCount': BabyOnesieCount,
+        # 'MugCount': MugCount,  
+        # 'BagCount' : BagCount,
+        # 'WaterBottleCount': WaterBottleCount,
+        #'ProductQ': ProductQ,
         'WeeklyDate' : WeeklyDate,    
         'weekly':weekly,
         'MonthlyDate': MonthlyDate,        
@@ -941,6 +934,12 @@ def orderconfirm(request):
             days = 14
         elif totalQ < 30:
             days = 18
+        
+        cart = cartFunct(request)
+        cart = cart['globalCart']
+        cart = cart.cart
+        cart.delete()
+        print(cart)
 
         return JsonResponse({'orderNo': order.randomOrderNumber, 'days': days})
         
@@ -948,3 +947,9 @@ def orderconfirm(request):
 
 def paymenterror(request):
     return render(request, 'store_index/error.html')
+
+def aboutus(request):
+    return render(request, 'store_index/aboutus.html')
+
+def contactus(request):
+    return render(request, 'store_index/contactus.html')

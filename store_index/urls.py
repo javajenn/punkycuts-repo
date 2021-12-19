@@ -26,5 +26,7 @@ urlpatterns = [
     path('reports/', views.financial, name='reports'),
     path('checkout/billing/', views.billing, name='billing'),
     path('checkout/confirmation/', views.orderconfirm, name='confirmation'),
-    path('checkout/error/', views.paymenterror, name='paymenterror')
+    path('checkout/error/', views.paymenterror, name='paymenterror'),
+    path('aboutus/', views.aboutus, name='aboutus'),
+    path('contactus/', views.contactus, name='contactus')
 ]

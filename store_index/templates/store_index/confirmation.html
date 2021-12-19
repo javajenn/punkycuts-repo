@@ -20,15 +20,16 @@
     {% block content %}
         <div class="container mt-3">
             <div class="row justify-content-center">
-                <div class="col-12 d-flex justify-content-center">
+                <div class="col-12 d-flex flex-column justify-content-center">
 
-                <p>
-                    Thanks for ordering! Your order number is&nbsp;<div id="orderNo"></div>.
-                </p>
-                <br>
-                <p>
-                    You can expect your order to ship in the next&nbsp;<div id="days"></div>&nbsp;days.
-                </p>
+                <div class="confirm text-center">
+                    <h3 class="mt-5">
+                        Thanks for ordering! Your order number is&nbsp;<p class="d-inline" id="orderNo"></p>.
+                    </h3>
+                    <h4 class="mt-3">
+                        You can expect your order to ship in the next&nbsp;<p class="d-inline" id="days"></p>&nbsp;days.
+                    </h4>
+                    </div>
                 </div>
                 
                 </div>
