@@ -253,9 +253,9 @@ def products(request, cat=''):
     heading = ''
     images = Image.objects.all()
     if cat != '':
-        category = Category.objects.filter(Name=cat)
+        category = Category.objects.filter(slug=cat)
         try:
-            cat1 = Category.objects.get(Name=cat)
+            cat1 = Category.objects.get(slug=cat)
             heading = 'Category: ' + cat1.Name
         except:
             pass
