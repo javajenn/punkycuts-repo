@@ -945,3 +945,6 @@ def orderconfirm(request):
         return JsonResponse({'orderNo': order.randomOrderNumber, 'days': days})
         
     return render(request, 'store_index/confirmation.html')
+
+def paymenterror(request):
+    return render(request, 'store_index/error.html')

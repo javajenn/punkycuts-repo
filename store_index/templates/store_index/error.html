@@ -1,0 +1,44 @@
+{% extends "store_index/base.html" %}
+{% load static %}
+{% load store_extras %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="data:,">
+        
+        
+        {% block head %}
+        <title>Small Businesses</title>
+
+        </style>
+        {% endblock %}
+
+    </head>
+    <body>
+    {% block content %}
+        <div class="container mt-3">
+            <div class="row justify-content-center">
+                <div class="col-12 d-flex justify-content-center">
+
+                <p>
+                    There was a problem connecting to Paypal. Error:&nbsp;<div id="errorMsg"></div>.
+                </p>
+
+                </div>
+                
+                </div>
+            </div>
+
+        </div>
+        <script>
+            $(document).ready(function(){
+                let div = document.getElementById('errorMsg');
+                console.log(div);
+                div.innerHTML = sessionStorage.getItem('error');
+            });
+        </script>
+    {% endblock %}
+    </body>
+</html>
