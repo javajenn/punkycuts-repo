@@ -80,7 +80,6 @@
                 $('[data-bs-toggle="popover"]').popover();   
             });
         </script>
-        <script type="text/javascript" src="{% static 'scripts.js' %}"></script>
     </head>
     <body>
         <div class="page-container container d-flex flex-column">
@@ -105,7 +104,7 @@
                                         <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
                                     </ul>
                                 </div>
-                                <button type="button" id="btnCart" class="btn btn-dark shadow-sm {% if cartdisabled == 'true' %} d-none {% endif %}" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">Cart</button>
+                                <button type="button" id="btnCart" class="btn btn-dark shadow-sm {% if cartdisabled == 'true' or request.session.siteDisabled == True %} d-none {% endif %}" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">Cart</button>
                             </div>
                             <a href="/" title="Home" class="stretched-link"></a>
                         </div>

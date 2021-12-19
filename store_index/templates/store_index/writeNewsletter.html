@@ -1,12 +1,19 @@
 {% extends "store_index/base.html" %}
 
 {% block content %}
-<form method="POST">{% csrf_token %}
-    <div class="input-group">
-    {{ Form }}
-        <span class="input-group-btn">
-            <button class="btn btn-default" type="submit">Submit</button>
-        </span>
-    </div>
-</form>
+<div class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col-5 d-flex flex-column justify-content-center text-center">
+            <h5 class="text-center">Write your newsletter here.</h5>
+            <form method="POST" class="text-center">{% csrf_token %}
+                <div class="w-25 input-group d-flex flex-column justify-content-center">
+                {{ Form }}
+                    <span class="input-group-btn">
+                        <button class="mt-2 btn btn-primary" type="submit">Submit</button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    <div>
+<div>
 {% endblock %}

@@ -28,5 +28,6 @@ urlpatterns = [
     path('checkout/confirmation/', views.orderconfirm, name='confirmation'),
     path('checkout/error/', views.paymenterror, name='paymenterror'),
     path('aboutus/', views.aboutus, name='aboutus'),
-    path('contactus/', views.contactus, name='contactus')
+    path('contactus/', views.contactus, name='contactus'),
+    path('punkydashboard/disablesite', views.turnoff, name='turnoff')
 ]

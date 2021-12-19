@@ -46,6 +46,9 @@ class NewsletterSignUpForm(forms.ModelForm):
     class Meta:
         model = NewsletterUser
         fields = ['SubscriberEmail']
+        labels = {
+            'SubscriberEmail': 'Email',
+        }
 
         # Normalize Email Function
         def NormalizeEmail(self):
@@ -59,6 +62,10 @@ class NewsletterCreationForm(forms.ModelForm):
     class Meta:
         model = Newsletter
         fields = ['Subject', 'Body', 'Email', 'Status']
+        widgets = {
+            'Subject':forms.TextInput(attrs={'autofocus': ''}),
+            
+        }
 
 # class CustomerForm(forms.ModelForm):
 #     class Meta:

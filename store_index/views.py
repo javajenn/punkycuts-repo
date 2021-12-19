@@ -953,3 +953,14 @@ def aboutus(request):
 
 def contactus(request):
     return render(request, 'store_index/contactus.html')
+
+def turnoff(request):
+    if request.method == 'POST':
+        checked = request.POST.get('checked')
+        if checked == True or checked == 'true':
+            request.session['siteDisabled'] = True
+            siteDisabledFunct(request)
+        elif checked == False or checked == 'false':
+            request.session['siteDisabled'] == False
+            siteDisabledFunct(request)
+    return render(request, 'store_index/turnoff.html')

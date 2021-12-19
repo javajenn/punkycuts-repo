@@ -25,11 +25,20 @@
             <div class="row justify-content-center">
                 <div class="col-12 d-flex flex-column justify-content-center">
                    <h1>Administrator Dashboard</h1>
-                    <div class="mt-2 adminBtns">
+                    <div class="col-12 mt-2 adminBtns">
                         <a class="btn border col-3 p-2" href="{% url 'admin:index' %}">Database Admin</a>
                         <a class="btn border col-3 mx-3 p-2" href="{% url 'reports' %}">View Reports</a>
-                        <a class="btn border col-3 p-2" href="">Close Site</a>
+                        <a class="btn border col-3 p-2" href="{% url 'turnoff' %}">Close Site</a>
                     </div>
+                    <div class="col-12 mt-3 adminBtns">
+                        <a class="btn border col-3 p-2" href="https://punkycuts.pythonanywhere.com/admin/store_index/order/">View Orders</a>
+                        <a class="btn border col-3 mx-3 p-2" href="https://punkycuts.pythonanywhere.com/admin/store_index/inventory/">Manage Inventory</a>
+                        <a class="btn border col-3 p-2" href="https://punkycuts.pythonanywhere.com/admin/store_index/product/">Manage Products</a>
+                    </div>
+                    <div class="mt-3 col-12 adminBtns">
+                        <a class="btn border col-3 p-2" href="{% url 'news_write' %}">Write Newsletter</a>
+                    </div>
+
                 </div>
             </div>
             <div class="col-12">

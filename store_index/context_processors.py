@@ -34,3 +34,13 @@ def maxQuantityPerProduct(request):
 # def updateMessages(request):
 #     print(request._messages)
 #     return {'msgs': request._messages}
+
+def siteDisabledFunct(request):
+    status = request.session.get('siteDisabled')
+    if status == True or status == 'true':
+        siteDisabled = True
+    elif status == False or status == 'false':
+        siteDisabled = False
+    else:
+        siteDisabled = 'Unknown'
+    return {'siteDisabed': siteDisabled}

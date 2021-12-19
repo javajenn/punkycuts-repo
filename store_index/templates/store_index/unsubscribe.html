@@ -1,15 +1,15 @@
 {% extends "store_index/base.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-lg-6 col-lg-offset-3">
+<div class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col-12 d-flex flex-column justify-content-center">
             <h3 class="text-center">Unsubscribe from our newsletter.</h3>
-            <form method="POST">{% csrf_token %}
-                <div class="input-group">
-                {{ Form }}
+            <form method="POST" class="mt-4">{% csrf_token %}
+                <div class="input-group d-flex justify-content-center">
+                {{ Form.as_p }}
                     <span class="input-group-btn">
-                        <button class="mx-auto btn-dark shadow-sm btn btn-default" type="submit">Unsubscribe</button>
+                        <button class="ms-2 mx-auto btn-dark shadow-sm btn btn-default" type="submit">Unsubscribe</button>
                     </span>
                 </div>
             </form>
