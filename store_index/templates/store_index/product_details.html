@@ -42,7 +42,7 @@
                 <div class="productInfo ms-5 text-center">
                     <h1>{{ product.Name }}</h1>
                     <p><i>{{ product.Description }}</i></p>
-                    {% if product.Type.Product_Type == 'T-Shirt' %}
+                    {% if sizes is not None %}
                         Size:<select id="sizeDD" class="my-2 ms-2" name="sizeOptions">
                             {% for size in sizes %}
                             <option>{{size}}</option>
