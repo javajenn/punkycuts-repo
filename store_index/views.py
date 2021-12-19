@@ -959,8 +959,8 @@ def turnoff(request):
         checked = request.POST.get('checked')
         if checked == True or checked == 'true':
             request.session['siteDisabled'] = True
-            siteDisabledFunct(request)
+            siteDisabledFunct(request, checked)
         elif checked == False or checked == 'false':
             request.session['siteDisabled'] == False
-            siteDisabledFunct(request)
+            siteDisabledFunct(request, checked)
     return render(request, 'store_index/turnoff.html')
