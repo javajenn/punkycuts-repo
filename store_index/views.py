@@ -915,7 +915,7 @@ def orderconfirm(request):
         source = string.digits
         randomOrderNumber=''.join((random.choice(source) for i in range(10)))
         order = Order.objects.get(id=request.POST['order'])
-        order.randomOrderNumber = randomOrderNumber
+        order.RandomOrderNumber = randomOrderNumber
         order.save()
         request.session['orderNo'] = randomOrderNumber
         request.session.get('orderNo', randomOrderNumber)
