@@ -1,4 +1,4 @@
-let map;
+var map;
 
 function initMap() {
   map = new google.maps.Map(document.getElementById("map"), {
@@ -33,33 +33,37 @@ function initMap() {
         shouldFocus: false,
       });
   });
+  const pauseCincyInfo = new google.maps.InfoWindow({
+    content: "<div class='info'><h2>Pause Cincy</h2><p>Everything wellness! Plants, crystals, juices, and more.</p></div>",
+  });
   const pauseCincyMarker = new google.maps.Marker({
       position: {lat:39.133304, lng:-84.509005},
       map,
       icon: img,
   });
   markers.push(pauseCincyMarker);
+  pauseCincyMarker.addListener('click', ()=>{
+    pauseCincyInfo.open({
+      anchor: pauseCincyMarker,
+      map,
+      shouldFocus: false,
+    });
+  });
+  const chiChiLLCInfo = new google.maps.InfoWindow({
+    content: "<div class='info'><h2>Chi Chi LLC</h2><p>Women's owned small local business!</p></div>",
+  });
   const chiChiLLCMarker = new google.maps.Marker({
       position: {lat:39.110392, lng:-84.515408},
       map,
       icon: img,
   })
   markers.push(chiChiLLCMarker);
-
-  const infoWindow = new google.maps.InfoWindow();
-
-  map.data.addListener('click', (event) => {
-    const category = event.feature.getProperty('category');
-    const name = event.feature.getProperty('name');
-    const description = event.feature.getProperty('description');
-    const hours = event.feature.getProperty('hours');
-    const phone = event.feature.getProperty('phone');
-    const content = `
-        <h2>${name}</h2><p>${description}</p>
-        <p>${category}</p>
-        <p>Hours: ${hours}</p>
-    `;
-    infoWindow.setContent(content);
-    infoWindow.open(map);
+  chiChiLLCMarker.addListener('click', ()=>{
+    chiChiLLCInfo.open({
+      anchor: chiChiLLCMarker,
+      map,
+      shouldFocus: false,
+    })
   })
 }
+
