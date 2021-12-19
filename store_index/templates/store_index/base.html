@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" href="data:,">
+        <link rel="icon" href="{% static 'logo.png' %}">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
         <title>
@@ -52,10 +52,10 @@
             color: rgba(255,255,255,0.75);
         }
         .notification{
-            z-index: 2;
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
+            z-index: 2000;
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
         }
         .writeTableStyle td{
             padding: 5px;
@@ -163,7 +163,7 @@
                     </nav>
                 </div>
                 {% for message in messages %}
-                    <div id="toastNotif" role="alert" class="toast notification bg-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="8000">
+                    <div id="toastNotif" role="alert" class="mx-auto toast notification bg-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="8000">
                         <div class="toast-header">
                         <strong class="me-auto">
                             {% if message.tags == 'error' %}
@@ -199,23 +199,23 @@
                                     {% if globalCart is not None %}
                                         <table class="table align-middle">
                                         {% for p in globalCart  %}
-                                            <tr id="cartRow{{p.Product.id}}">
+                                            <tr id="cartRow{{p.id}}">
                                                 <td class="align-middle"><img class="img-fluid" style="width:110px;object-fit:cover;" src="{{p.images.first.Picture.url}}"></td>
                                                 <td colspan="2" class="align-middle">
                                                     <span class="d-inline-block">{{p.Product.Name}}
-                                                    {% if p.Product.Type.Product_Type == 'T-Shirt' %}
-                                                    <small class="d-block">Size: {{p.Product.Size.Product_Size}}</small>
+                                                    {% if p.Size is not None %}
+                                                    <small id="cartPrdSize{{p.Size.Product_Size}}" class="d-block">Size: {{p.Size.Product_Size}}</small>
                                                     {% endif %}
                                                     </span>
                                                 </td>
-                                                <td class="pe-0">
-                                                    <select class="align-middle" name="quantityDropdown{{p.Product.id}}" id="quantityDropdown{{p.Product.id}}" onchange="updateCartQuantity(event)">
+                                                <td class="pe-0" id="selCp{{p.id}}">
+                                                    <select class="align-middle" name="quantityDropdown{{p.Product.id}}" id="quantityDropdown{{p.Product.id}}" onchange="baseUpdateCartQuantity(event)">
                                                         {% for n in maxPerProduct %}
                                                         <option value="{{n}}" {% if p.Quantity == n %} selected {% endif %}>{{n}}</option>
                                                         {% endfor %}
                                                     </select>
                                                 </td>
-                                                <td class="p-0 align-top" style="position:relative;margin-left:-10px;">
+                                                <td class="p-0 align-top" id="cp{{p.id}}" style="position:relative;margin-left:-10px;">
                                                     {% comment %} <button type="button" class="remove-cart-prd" data-bs-dismiss="toast" aria-label="Close"> {% endcomment %}
                                                     <img id="cartRemove{{p.Product.id}}" title="Remove product from cart" onclick="baseRemoveFromCart(event)" role="button" style="position:relative;width:20px;height:20px;" src="{% static '/remove.png' %}">
                                                 </td>
@@ -268,16 +268,18 @@
                 }
             });
 
-            function updateCartQuantity(event) {
-                p_id = event.target.name.slice(16)
-
+            function baseUpdateCartQuantity(event) {
+                let p_id = event.target.name.slice(16)
+                let parentId = event.target.parentElement.id;
+                let cp = parentId.replace('selCp', '');
                 //p_id = 
                 //console.log(id)
                 $.post('{% url "handlecart" %}', 
                     {
                         quantity: event.target.value, 
                         csrfmiddlewaretoken: '{{ csrf_token }}', 
-                        productid: p_id
+                        productid: p_id,
+                        cp: cp
                     },
                     function(data) {
                         if (data.subtotal > -1) {
@@ -289,17 +291,26 @@
                 )
             }
             function baseRemoveFromCart(event) {
-                p_id = event.target.id.slice(10)
-                console.log(event, p_id);
+                let p_id = event.target.id.slice(10);
+                let parentID = event.target.parentElement.id;
+                let cp = parentID.replace('cp', '');
+
+                //let size = document.getElementById('cartPrdSize');
+                //if (size) {
+                //    size = size.textContent;
+                //    size = size.replace('Size: ', '');
+                //}
+                //console.log(event, p_id);
 
                 $.post('{% url "handlecart" %}',
                     {
                         csrfmiddlewaretoken: '{{ csrf_token }}', 
-                        removeProd: p_id
+                        removeProd: p_id,
+                        cp: cp
                     },
                     function(data) {
                         console.log("event",event, "P_id", p_id);
-                        let sel = '#' + event.target.id;
+                        let sel = '#' + event.target.parentElement.id;
                         $(sel).slideUp(1300);
                         sel = '#' + event.target.parentElement.parentElement.id;
                         $(sel).fadeOut(2100);

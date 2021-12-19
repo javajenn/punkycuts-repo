@@ -25,7 +25,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str, force_text, DjangoUnicodeDecodeError
 from .tokens import generate_token
-from django.core.mail import EmailMessage, send_mail
+from django.core.mail import EmailMessage, message, send_mail
 from django.conf import settings
 import threading
 from twilio.rest import Client 
@@ -34,6 +34,8 @@ from django.views.decorators.csrf import csrf_exempt
 from postman.forms import WriteForm
 from django.forms.models import model_to_dict
 from django.core import serializers
+import random
+import string
 
 # Create your views here.
 def index(request):
@@ -61,14 +63,14 @@ def index(request):
             try:
                 response = requests.get('https://app.zipcodebase.com/api/v1/distance', headers=headers, params=params);
             except requests.exceptions.ConnectionError:
-                messages.add_message(messages.ERROR, 'Error connecting to zipcode service. Be aware we only ship to Cincinnati and some surrounding regions.')
+                messages.add_message(request, messages.ERROR, 'Error connecting to zipcode service. Be aware we only ship to Cincinnati and some surrounding regions.')
             if response.status_code == 200:
                 content = json.loads(response.text)
                 results = content['results']
                 if results:
                     distance = results[zipcode]
                 else:
-                    distance = .0123
+                    distance = None
     
     #cartsession = request.session.session_key
     #try:
@@ -330,11 +332,20 @@ def product_details(request, slug):
     glbCart = g.get('globalCart')
     #print(glbCart)
 
-    sizes = Size.objects.all()
+    #sizes = Size.objects.all()
+    sizes = product.Sizes.all()
     context.update({'sizes': sizes})
     #OrderProduct.objects.select_related('order').filter(orderDate__range=[WeeklyDate, TodaysDate])
+    
 
     if request.method == 'POST':
+        pageUrl = request.META.get('HTTP_ORIGIN') + request.META.get('PATH_INFO')
+        if request.POST.get('backUrl') == pageUrl:
+            pass
+        else:
+            originalbackUrl = request.POST.get('backUrl')
+            request.session['backUrl'] = originalbackUrl
+
         #request.session['cart'] = product
         cartsession = request.session.session_key
         try:
@@ -350,7 +361,11 @@ def product_details(request, slug):
         cartid = cart.id
         cartproducts = CartProduct.objects.filter(Q(Cart__Session=cartsession))
 
-        cartproduct = CartProduct(Cart_id=cartid, Product_id=product.id, Quantity=1)
+        if request.POST.get('size') != '':
+            size = Size.objects.get(Product_Size=request.POST['size'])
+            cartproduct = CartProduct(Cart_id=cartid, Product_id=product.id, Quantity=1, Size=size)
+        else:
+            cartproduct = CartProduct(Cart_id=cartid, Product_id=product.id, Quantity=1)
         equality = False
         maxQuantityPerProduct(request)
         maxQuantity = len(request.maxPerProduct)
@@ -359,10 +374,10 @@ def product_details(request, slug):
             global_cart = cartFunct(request)
             cart = global_cart['globalCart']
             subtotal = cart.cart.Subtotal
-            return JsonResponse({'quantity': cartproduct.Quantity, 'subtotal': subtotal})
+            return JsonResponse({'quantity': cartproduct.Quantity, 'subtotal': subtotal, 'backUrl': request.session['backUrl']})
         else:
             for cp in cartproducts:
-                if cp.Cart_id == cartproduct.Cart_id and cp.Product_id == cartproduct.Product_id:
+                if cp.Cart_id == cartproduct.Cart_id and cp.Product_id == cartproduct.Product_id and cp.Size == cartproduct.Size:
                     equality = True
                     crtprd = cp
             if equality == True:
@@ -378,7 +393,7 @@ def product_details(request, slug):
                     #     cart = c['cart']
                     #     subtotal = cart.Subtotal
                     #RequestContext(request)
-                    return JsonResponse({'quantity': cartproduct.Quantity, 'subtotal': subtotal})
+                    return JsonResponse({'quantity': cartproduct.Quantity, 'subtotal': subtotal, 'backUrl': request.session['backUrl']})
                 else:
                     #messages.add_message(request, messages.ERROR, 'We only allow a maximum quantity of 12 at this time.')
                     #msg = request._messages._queued_messages[0]
@@ -393,10 +408,10 @@ def product_details(request, slug):
                     global_cart = cartFunct(request)
                     cart = global_cart['globalCart']
                     subtotal = cart.cart.Subtotal
-                    return JsonResponse({'quantity': cartproduct.Quantity, 'subtotal': subtotal, 'messages': 'newMessage'})
+                    return JsonResponse({'quantity': cartproduct.Quantity, 'subtotal': subtotal, 'messages': 'newMessage', 'backUrl': request.session['backUrl']})
             else:
                 cartproduct.save()
-                return JsonResponse({'quantity': cartproduct.Quantity})
+                return JsonResponse({'quantity': cartproduct.Quantity, 'backUrl': request.session['backUrl']})
         # make a new instance of cart model! but not every time.. 
         #pass
 
@@ -475,19 +490,29 @@ def handle_cart(request):
     subtotal = 0
     if request.method == 'POST':
         if 'quantity' in request.POST:
+            overq = 'false'
             quantity = request.POST['quantity']
             product = Product.objects.get(id=request.POST['productid'])
-            cartproduct = globalCart.get(Product=product)
-            cartproduct.Quantity = quantity
+            cartproduct = CartProduct.objects.get(id=request.POST['cp'])
+            if cartproduct.Product.Status.Description == 'In Stock':
+                inv = Inventory.objects.get(Product= cartproduct.Product, Size=cartproduct.Size)
+                if int(quantity) > inv.Quantity:
+                    cartproduct.Quantity = inv.Quantity
+                    messages.add_message(request, messages.ERROR, 'There are less items in stock than you\'re trying to add. Cart has been updated to reflect current inventory.')
+                    overq = 'true'
+                else:
+                    cartproduct.Quantity = quantity
             cartproduct.save()
             global_cart = cartFunct(request)
             cart = global_cart['globalCart']
             subtotal = cart.cart.Subtotal
-            return JsonResponse({'subtotal': subtotal})
+            return JsonResponse({'subtotal': subtotal, 'overQuantity':overq})
         elif 'removeProd' in request.POST:
             p_id = request.POST['removeProd']
+            #selectedCp = CartProduct.objects.get(id=request.POST['cp'])
             product = Product.objects.get(id=p_id)
-            cartproduct = globalCart.get(Product=product)
+            # maybe i can send the size and filter instead of get 
+            cartproduct = CartProduct.objects.get(id=request.POST['cp'])
             cartproduct.delete()
             global_cart = cartFunct(request)
             cart = global_cart['globalCart']
@@ -527,7 +552,7 @@ def NewsletterSignUp(request):
         subject = "Thank you for subscribing to Punky Cuts Newsletter!"
         from_email = settings.EMAIL_HOST_USER
         to_email = [Instance.SubscriberEmail]
-        signup_message = """Welcome to our newsletter. If you would like to unsubscribe visit: http://127.0.0.1:8000/Unsubscribe/"""
+        signup_message = """Welcome! Thank you for subscribing to PunkyCuts newsletter. You will recieve updates and news for our store. Be sure to check us out on instagram as well at https://www.instagram.com/punkycuts/. To unsubscribe to this newletter click here https://punkycuts.pythonanywhere.com/newsletter/unsubscribe/."""
         send_mail(subject=subject, from_email=from_email, recipient_list=to_email, message=signup_message, fail_silently=True)
 
     Context = {
@@ -609,10 +634,67 @@ def checkout(request):
         shipForm = ShippingForm()
     context.update({'shipForm':shipForm})
 
-    if request.method == 'POST':
-        guest = request.POST.get('guest') 
-        if guest == 'true':
+    if 'guest' in request.session:
+        if request.session['guest'] == 'true':
             context.update({'guest': 'true'})
+
+    global_cart = cartFunct(request)
+    global_cart = global_cart['globalCart']
+    for cp in global_cart:
+        if cp.Product.Status.Description == 'In Stock':
+            inv = Inventory.objects.get(Product=cp.Product, Size=cp.Size)
+            q = inv.Quantity
+            if cp.Quantity > q:
+                cp.Quantity = q
+                cp.save()
+                messages.add_message(request, messages.ERROR, 'Quantity of items in your cart have been adjusted based on current inventory.')
+
+                
+    if request.method == 'POST':
+        postGuest = request.POST.get('guest') 
+        sessionGuest = request.session.get('guest')
+        if postGuest == 'true':
+            context.update({'guest': 'true'})
+            request.session['guest'] = 'true'
+
+        if 'zip' in request.POST:
+            zipcode = request.POST['zip']
+
+            headers = { 
+                    "apikey": "7b088940-393c-11ec-b8a2-09fe2745fd06"
+                }
+
+            params = (
+                ("code", "45202"), 
+                ("compare", zipcode),
+                ("country", "us")
+            );
+
+            try:
+                response = requests.get('https://app.zipcodebase.com/api/v1/distance', headers=headers, params=params);
+            except requests.exceptions.ConnectionError:
+                messages.add_message(request, messages.ERROR, 'Error connecting to zipcode service. Be aware we only ship to Cincinnati and some surrounding regions.')
+            if response.status_code == 200:
+                content = json.loads(response.text)
+                results = content['results']
+                if results:
+                    distance = results[zipcode]
+                    if distance > 200:
+                        return JsonResponse({'status': 'out-of-range'})
+                else:
+                    distance = None
+                    return JsonResponse({'status': 'distance-none'})
+        try:
+            customer = request.user.customer
+        except:
+            customer = None
+            if 'firstName' in request.POST:
+                fName = request.POST['firstName']
+                lName = request.POST['lastName']
+                email = request.POST['email']
+                phone = request.POST['phone']
+                zipcode = request.POST['zip']
+
         checkout = request.POST.get('approved')
         status = request.POST.get('status')
         if checkout == 'true' and status == 'COMPLETED':
@@ -625,6 +707,37 @@ def checkout(request):
             city = data['admin_area_2']
             country = data['country_code']
             zipcode = data['postal_code']
+            total = request.POST.get('total')
+            # MAKE SURE TO REMOVE SESSION VAR FOR GUEST OR SET TO FALSE!! JENN TO DO!!
+            global_cart = cartFunct(request)
+            global_cart = global_cart['globalCart']
+            print(global_cart)
+            if customer is None:
+                customer = Customer(FirstName=fName, LastName=lName, Email=email, PhoneNumber=phone, ShippingAddress=str(adr1+ " " +adr2), ShippingCity=city, ShippingZipCode=zipcode, ShippingState=state)
+                customer.save()
+            newOrder = Order(Customer=customer, Date=datetime.now(), Total=total)
+            newOrder.save()
+            counter = 0
+            for cp in global_cart:
+                print(cp)
+                newOrderProduct = OrderProduct()
+                newOrderProduct.Order = newOrder
+                newOrderProduct.Product = cp.Product
+                newOrderProduct.Quantity = cp.Quantity
+                newOrderProduct.Size = cp.Size
+                if newOrderProduct.Product.Status.Description == 'In Stock':
+                    inv = Inventory.objects.get(Product=newOrderProduct.Product, Size=newOrderProduct.Size)
+                    inv.Quantity -= newOrderProduct.Quantity
+                    inv.save()
+                    if inv.Quantity == 0:
+                        product = Product.objects.get(id=newOrderProduct.Product.id)
+                        stat = Status.objects.get(Description='Out of Stock')
+                        product.Status = stat
+                        product.save()
+                newOrderProduct.save()
+            return JsonResponse({'orderId': newOrder.id})
+            #return render(request, 'store_index/confirmation.html', context)
+
 
     if 'zipcode' in request.session:
         context.update({'zip':request.session['zipcode']})
@@ -802,3 +915,33 @@ def financial(request):
 
 def billing(request):
     return render(request, 'store_index/billing.html')
+
+def orderconfirm(request):
+    context = {}
+    if request.method == 'POST':
+        source = string.digits
+        randomOrderNumber=''.join((random.choice(source) for i in range(10)))
+        order = Order.objects.get(id=request.POST['order'])
+        order.randomOrderNumber = randomOrderNumber
+        order.save()
+        request.session['orderNo'] = randomOrderNumber
+        request.session.get('orderNo', randomOrderNumber)
+        context.update({'orderNo': order.randomOrderNumber})
+        ops = OrderProduct.objects.filter(Order=order)
+        totalQ = 0
+        for op in ops:
+            q = op.Quantity
+            totalQ += q
+            
+        if totalQ < 5:
+            days = 5
+        elif totalQ < 12:
+            days = 10
+        elif totalQ < 20:
+            days = 14
+        elif totalQ < 30:
+            days = 18
+
+        return JsonResponse({'orderNo': order.randomOrderNumber, 'days': days})
+        
+    return render(request, 'store_index/confirmation.html')

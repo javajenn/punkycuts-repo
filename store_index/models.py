@@ -26,11 +26,7 @@ class Customer(models.Model):
     ShippingZipCode = models.CharField(max_length=5, null=False, blank=True, default='')
     ShippingState = models.ForeignKey(State, related_name="ShippingState", on_delete=models.CASCADE, null=True, blank=True, default=None)
 
-    BillingAddress = models.CharField(max_length=100, null=False, blank=True, default='')
-    BillingCity = models.CharField(max_length=50, null=False, blank=True, default='')
-    BillingZipCode = models.CharField(max_length=5, null=False, blank=True, default='')
-    BillingState = models.ForeignKey(State, related_name="BillingState", on_delete=models.CASCADE, null=True, blank=True, default=None)
-
+    #Properties
     is_email_verified = models.BooleanField(default=False)
 
     def __str__(self):
@@ -74,9 +70,11 @@ class Status(models.Model):
 class Order(models.Model):
     Customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=False)
     Date = models.DateTimeField(default=datetime.now, blank=True)
+    Total = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    RandomOrderNumber = models.CharField(max_length=10, default='')
     #(auto_now=False, auto_now_add=False)
     def __str__(self):
-        return str("ORDERID: " + str(self.id) + " CUSTOMER: " + str(self.Customer))
+        return str("ORDERID: " + str(self.id) + " CUSTOMER: " + str(self.Customer) + " AMT PAID: " + str(self.Total))
 
 class Size(models.Model):
   Product_Size = models.CharField(max_length=20)
@@ -99,7 +97,7 @@ class Product(models.Model):
     #statusID = models.IntegerField()
     Status = models.ForeignKey(Status, on_delete=models.CASCADE, related_name="products", default='')
     Price = models.DecimalField(max_digits=5, decimal_places=2)
-    Quantity = models.IntegerField()
+    #Quantity = models.IntegerField()
     Type = models.ForeignKey(Type, on_delete=models.CASCADE, default='')
     slug = models.SlugField(default="", blank=True, null=False, db_index=True) #T-shirt-1 => t-shirt-1
     Product_Categories = models.ManyToManyField(Category)
@@ -214,5 +212,7 @@ class CartProduct(models.Model):
 
 class Inventory(models.Model):
   Product = models.ForeignKey(Product, on_delete=models.CASCADE)
-  Size = models.ForeignKey(Size, on_delete=models.CASCADE)
+  Size = models.ForeignKey(Size, on_delete=models.CASCADE, null=True, blank=True)
   Quantity = models.PositiveIntegerField()
+  def __str__(self):
+    return f"PRODUCT: {self.Product} SIZE: {self.Size} QUANTITY: {self.Quantity}"

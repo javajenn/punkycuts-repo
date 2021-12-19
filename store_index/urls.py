@@ -24,5 +24,6 @@ urlpatterns = [
     path('newsletter/write/', views.ControlNewsletter, name='news_write'),
     path('checkout/', views.checkout, name='checkout'),
     path('reports/', views.financial, name='reports'),
-    path('checkout/billing/', views.billing, name='billing')
+    path('checkout/billing/', views.billing, name='billing'),
+    path('checkout/confirmation/', views.orderconfirm, name='confirmation')
 ]

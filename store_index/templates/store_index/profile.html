@@ -117,7 +117,7 @@
                                 <input name="PhoneNumber" type="text" value="{{ customer.PhoneNumber }}" disabled>
                             </div>     
                             <h5>Shipping Address:</h5>
-                            <div class="field">
+                            {% comment %} <div class="field">
                                 <label for="ShippingAddress">Address:</label>
                                 <input name="ShippingAddress" type="text" value="{{ customer.ShippingAddress }}" disabled>
                             </div>
@@ -149,7 +149,7 @@
                             <div class="field">
                                 <label for="BillingState">State:</label>
                                 <input name="BillingState" type="text" value="{{ customer.BillingState }}" disabled>
-                            </div>  
+                            </div>   {% endcomment %}
                         </form>
                     </div>
                     <div id="Update" class="tabcontent">
@@ -211,7 +211,7 @@
                                     {% endif %}
                                 </div>
                             </div>    
-                            <h5>Shipping Address:</h5>
+                            {% comment %} <h5>Shipping Address:</h5>
                             <div class="fieldWrapper">
                                 {{ customer_form.ShippingAddress.errors }}
                                 <label class="fieldLabel" for="{{ customer_form.ShippingAddress.id_for_label }}">Address: </label>
@@ -292,7 +292,7 @@
                                         <a class="help" href="#" data-bs-toggle="popover" role="button" tabindex="0" data-bs-trigger="hover focus" title="{{ customer_form.BillingState.help_text|safe }}">?</a>
                                     {% endif %}
                                 </div>
-                            </div>
+                            </div> {% endcomment %}
                             <input type="submit">  
                         </form>
                     </div>

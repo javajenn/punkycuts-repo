@@ -1,5 +1,5 @@
 {% extends "store_index/base.html" %}
-{% load static %}
+{% load static %} {% load store_extras %}
 <!doctype html>
 <html lang="en">
     <head>
@@ -48,6 +48,11 @@
                 pointer-events: auto;
                 cursor: default;
             }
+            table tfoot {
+                background-color: rgba(180, 180, 180, 0.8);
+                inset-block-end: 0; 
+                height:60px;
+              }
         </style>
         {% endblock %}
         <!--  -->
@@ -64,13 +69,14 @@
                     <div class="step1">
                         <h3 class="text-center">Step 1: Review Cart</h3>
                         <hr>
-                        <div class="reviewCart overflow-auto m-1" style="max-height:35vh;">
+                        <div class="reviewCart overflow-auto m-1" style="max-height:45vh;">
                             {% if globalCart is not None %}
                             <table class="table table-borderless">
                                 <thead>
                                     <tr class="text-center">
                                         <th><small>Photo</small></th>
-                                        <th colspan="2"><small>Name</small></th>
+                                        <th><small>Name</small></th>
+                                        <th><small>Unit Price</small></th>
                                         <th><small>Quantity</small></th>
                                         <th><small>Remove</small></th>
                                     </tr>
@@ -78,22 +84,25 @@
                                 <tbody>
                                 {% for p in globalCart  %}
                                     <tr id="cartRow{{p.Product.id}}">
-                                        <td class="align-middle text-center" style="width:40%;"><img class="img-fluid" style="width:140px;object-fit:cover;" src="{{p.images.first.Picture.url}}"></td>
-                                        <td colspan="2" class="align-middle text-center" style="width:35%;">
+                                        <td class="align-middle text-center" style="width:35%;"><img class="img-fluid" style="width:140px;object-fit:cover;" src="{{p.images.first.Picture.url}}"></td>
+                                        <td class="align-middle text-center" style="width:25%;">
                                             <span class="d-inline-block">{{p.Product.Name}}
-                                            {% if p.Product.Type.Product_Type == 'T-Shirt' %}
-                                            <small class="d-block">Size: {{p.Product.Size.Product_Size}}</small>
+                                            {% if p.Size is not None %}
+                                            <small class="d-block">Size: {{p.Size.Product_Size}}</small>
                                             {% endif %}
                                             </span>
                                         </td>
+                                        <td class="align-middle text-center" style="width:15%;">
+                                            <p>${{p.Product.Price}}</p>
+                                        </td>
                                         <td class="text-center align-middle" style="width:15%;">
-                                            <select class="" name="quantityDropdown{{p.Product.id}}" id="quantityDropdown{{p.Product.id}}" onchange="updateCartQuantity(event)">
+                                            <select class="" id="selCp{{p.id}}" name="quantityDropdown{{p.Product.id}}" id="quantityDropdown{{p.Product.id}}" onchange="updateCartQuantity(event)">
                                                 {% for n in maxPerProduct %}
                                                 <option value="{{n}}" {% if p.Quantity == n %} selected {% endif %}>{{n}}</option>
                                                 {% endfor %}
                                             </select>
                                         </td>
-                                        <td class="align-bottom" style="width:10%;"> 
+                                        <td class="align-bottom" id="cp{{p.id}}" style="width:10%;"> 
                                             <img height="35px;" src="{% static 'cartremove.png' %}" id="removeCart{{p.Product.id}}" onclick="removeFromCart(event)" role="button" title="Remove from cart">
                                         </td>
                                     </tr>
@@ -108,6 +117,15 @@
                                     {% endif %} {% endcomment %}
                                 {% endfor %}
                                 </tbody>
+                                <tfoot class="w-100 position-sticky">
+                                    <tr class="p-1">
+                                        <th colspan="5">
+                                            Subtotal: {{globalCart.cart.Subtotal|floatformat:2}}<br>
+                                            5.75% Ohio Tax: {{globalCart.cart.Subtotal|state_taxes|floatformat:2}}<br>
+                                            <strong>Total: {{globalCart.cart.Subtotal|total_taxes|floatformat:2}}</strong>
+                                        </th>
+                                    </tr>
+                                </tfoot>
                             </table>
                             {% else %}
                             <p>No items in your cart. Add some!</p>    
@@ -118,7 +136,7 @@
                     {% if user.is_authenticated or guest == 'true'%}
                     <div class="step2">
                         <h3 class="text-center">Step 2: Enter Customer Information</h3>
-                        <form method="POST" class="m-1 p-1 text-center">
+                        <form method="POST" id="customerForm" class="m-1 p-1 text-center">
                             {% csrf_token %}
                             
                             <div class="fieldWrapper p-1">
@@ -175,7 +193,7 @@
                             
                             
                             <div class="mt-1 mb-3 text-center submit">
-                                <a id="nextBtn" class="btn btn-primary {% if globalCart is None %} disabled {% endif %}" onclick="showStep3()" role="button" {% if globalCart is None %} title="Must have products in cart and enter customer information fields to proceed." {% endif %}>Next</a>
+                                <input type="submit" id="nextBtn" class="btn btn-primary {% if globalCart is None %} disabled {% endif %}" role="button" {% if globalCart is None %} title="Must have products in cart and enter customer information fields to proceed." {% endif %} value="Next">
                             </div>
                         </form>
                     </div>
@@ -248,18 +266,106 @@
                     //div.scroll({top:div.scrollHeight, behavior:'smooth'});
                     scrollSmoothToBottom();
                 }
-                
+            }
+
+            $('#customerForm').submit(function(event) {
+                event.preventDefault();
+                console.log(this, event);
+                let fName = event.target[1].value;
+                let lName = event.target[2].value;
+                let email = event.target[3].value;
+                let phone = event.target[4].value;
+                let zip = event.target[5].value;
+                console.log(fName);
+                $.post('{% url "checkout" %}',
+                {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    firstName: fName,
+                    lastName: lName, 
+                    email: email,
+                    phone: phone,
+                    zip: zip
+
+                },
+                function(data) {
+                    // if returned bad don't submit.
+                    if (data.status == 'out-of-range' || data.status == 'distance-none') {
+                        // show error message 
+                        let newToast = document.createElement('div');
+                        newToast.classList.add('toast');
+                        newToast.classList.add('bg-danger');
+                        newToast.classList.add('notification');
+                        newToast.setAttribute('data-delay', '9000');
+                        newToast.setAttribute('id', 'toastCart');
+                        let newToastHeader = document.createElement('div');
+                        newToastHeader.classList.add('toast-header');
+                        let newToastText = document.createElement('strong');
+                        newToastText.classList.add('me-auto');
+                        newToastText.innerHTML = "ERROR";
+                        let btn = document.createElement('button');
+                        btn.setAttribute('type', 'button');
+                        btn.setAttribute('data-bs-dismiss', 'toast');
+                        btn.setAttribute('aria-label', 'close');
+                        btn.classList.add('btn-close');
+                        let newToastMsg = document.createElement('div');
+                        newToastMsg.classList.add('toast-body');
+                        if (data.status == 'out-of-range') {
+                            newToastMsg.innerHTML = "I'm sorry, we only ship within a 200 mile range of Cincinnati.";
+                        }
+                        newToastMsg.innerHTML = "I'm sorry, we only ship within a 200 mile range of Cincinnati.";
+                        newToastHeader.appendChild(newToastText);
+                        newToastHeader.appendChild(btn);
+                        newToast.appendChild(newToastHeader);     
+                        newToast.appendChild(newToastMsg);
+                        document.body.appendChild(newToast);                    
+                        let toastEl = document.getElementById('toastCart');
+                        let toast = new bootstrap.Toast(toastEl);
+                        toast.show();
+                        $('.toast').toast('show');
+                    } else {
+                        showStep3();
+                    }
+                })
+            });
+
+            function updateCartQuantity(event) {
+                let p_id = event.target.name.slice(16)
+                let id = event.target.id;
+                let cp = id.replace('selCp', '');
+                //p_id = 
+                //console.log(id)
+                $.post('{% url "handlecart" %}', 
+                    {
+                        quantity: event.target.value, 
+                        csrfmiddlewaretoken: '{{ csrf_token }}', 
+                        productid: p_id,
+                        cp: cp
+                    },
+                    function(data) {
+                        if (data.subtotal > -1) {
+                            let subtotal = 'Subtotal: $' + data.subtotal;
+                            let div = document.getElementById('cartSubtotal')
+                            div.innerHTML = subtotal;
+                        }
+                        if (data.overQuantity == 'true') {
+                            location.reload();
+                        }
+                    }
+                )
             }
 
             function removeFromCart(event) {
 
                 p_id = event.target.id.slice(10);
                 console.log(event, p_id);
+                let parentID = event.target.parentElement.id;
+                let cp = parentID.replace('cp', '');
              
                 $.post('{% url "handlecart" %}',
                     {
                         csrfmiddlewaretoken: '{{ csrf_token }}', 
-                        removeProd: p_id
+                        removeProd: p_id,
+                        cp: cp
                     },
                     function(data) {
                         location.reload();
@@ -339,7 +445,22 @@
                 return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3,6)}-${phoneNumber.slice(6, 10)}`;
             }
         </script>
-        <script>    
+        <script>
+            function showConfirmation(order) {
+                $.post('{% url "confirmation" %}',
+                {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    order:order
+                },
+                function(data) {
+                    debugger;
+                    console.log(order);
+                    sessionStorage.setItem('orderId', order);
+                    sessionStorage.setItem('orderNo', data.orderNo);
+                    sessionStorage.setItem('days', data.days);
+                    window.location.href = '{% url "confirmation" %}';
+                });
+            }
             // Render the PayPal button into #paypal-button-container
             paypal.Buttons({
                 
@@ -348,7 +469,7 @@
                     return actions.order.create({
                       purchase_units: [{
                         amount: {
-                          value: '20.20'
+                          value: '{{globalCart.cart.Subtotal|total_taxes|floatformat:2}}'
                         }
                       }]
                     });
@@ -358,16 +479,20 @@
                     return actions.order.capture().then(function(details) {
                       // This function shows a transaction success message to your buyer.
                     console.log(details.purchase_units[0]);
-                    debugger;
-                    alert('Transaction completed by ' + details.payer.name.given_name);
                     url = "{% url 'checkout' %}"
                     $.post(url, 
                     {
                         csrfmiddlewaretoken: '{{ csrf_token }}',
                         approved:'true',
                         status:details.status,
-                        data:JSON.stringify(details.purchase_units[0].shipping.address)
+                        data:JSON.stringify(details.purchase_units[0].shipping.address),
+                        total:details.purchase_units[0].amount.value
 
+                    },
+                    function(data){
+                        if (data.orderId) {
+                            showConfirmation(data.orderId);
+                        }
                     });
                     });
                 }

@@ -19,7 +19,7 @@ class UserEmailForm(forms.ModelForm):
 class CustomerEditForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ("FirstName", "LastName", "Email", "PhoneNumber", "ShippingAddress", "ShippingCity", "ShippingZipCode", "ShippingState", "BillingAddress", "BillingCity", "BillingZipCode", "BillingState")
+        fields = ("FirstName", "LastName", "Email", "PhoneNumber")
         help_texts = {
             'PhoneNumber': ('Area code is required. Must be United State phone number.'),
         }
@@ -86,7 +86,7 @@ class ShippingForm(forms.ModelForm):
         self.fields['ShippingZipCode'].required = True
         self.fields['ShippingState'].required = True
 
-class BillingForm(forms.ModelForm):
-    class Meta:
-        model = Customer
-        fields = ("BillingAddress", "BillingCity", "BillingZipCode", "BillingState")
+# class BillingForm(forms.ModelForm):
+#     class Meta:
+#         model = Customer
+#         fields = ("BillingAddress", "BillingCity", "BillingZipCode", "BillingState")

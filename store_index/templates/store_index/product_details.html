@@ -39,21 +39,31 @@
                     {% endfor %}
                 </div>
                 {% endif %}
-                <div class="productInfo ms-5">
+                <div class="productInfo ms-5 text-center">
                     <h1>{{ product.Name }}</h1>
-                    <p>{{ product.Description }}</p>
+                    <p><i>{{ product.Description }}</i></p>
                     {% if product.Type.Product_Type == 'T-Shirt' %}
-                        <select name="sizeOptions">
+                        Size:<select id="sizeDD" class="my-2 ms-2" name="sizeOptions">
                             {% for size in sizes %}
                             <option>{{size}}</option>
                             {% endfor %}
                         </select>
                     {% endif %}                   
-                    <p>Price: ${{ product.Price }}</p>
+                    <p class="mt-3 fs-5">Price: ${{ product.Price }}</p>
                     <input type="hidden" id="prodToCart" name="prodToCart" value="{{product.id}}">
-                    <button type="submit" id="add_to_cart" onclick="addToCart()">add to cart</button>
-                    <button id="purchase_now">purchase now</button>
-                    <button id="other_products">back to products</button>
+                    <div class="d-flex flex-column text-center justify-content-center">
+                        <input class="mt-2 mb-2 mx-auto btn btn-primary" type="submit" id="add_to_cart" onclick="addToCart()" value="Add To Cart">
+                        {% if request.META.HTTP_REFERER is not None %}
+                        <button id="backUrlBtn" role="button" class="mt-1 mx-auto d-block btn btn-primary" onclick="window.location.href='{{ request.META.HTTP_REFERER }}';">Back To Products</button>
+                        {% endif %}
+                        {% comment %} 
+                        my thoughts here were to if user is logged in show product inquiry btn
+                        {% if user.is_authenticated %}
+                        <div class="d-block">
+                            <img src="{% static 'ask.png' %}" height="50px">
+                        </div>
+                        {% endif %} {% endcomment %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -68,14 +78,31 @@
     });
     // const product = JSON.parse(document.getElementById('hello-data').textContent);
     function addToCart() {
+
+// JENN TO DO !! SO NOW I SHOW CORRECT SIZES, NEED TO 
+            // SEND THAT SELECTED SIZE TO THE CART PRODUCT! 
         event.preventDefault();
-        url = "{% url 'product_details' slug=product.slug %}"
+        let url = "{% url 'product_details' slug=product.slug %}"
+        let backUrl = '{{ request.META.HTTP_REFERER }}' 
+        let size = document.getElementById('sizeDD')
+        if (size) {
+            size = size.value;
+        }
         //data = $("")
         $.post(url, 
             {
-                csrfmiddlewaretoken: '{{ csrf_token }}'
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                backUrl: backUrl,
+                size: size
             },
             function(data) {
+
+                // first need to set back to products url back since it's going to change.
+                let btn = document.getElementById('backUrlBtn');
+                console.log(btn);
+                let replace = "window.location.href='" + data.backUrl + "';";
+                btn.setAttribute('onclick', replace);
+
                 if (data.quantity > 1) {
                     // update the dropdown with new quantity
                     const id = 'quantityDropdown' + '{{product.id}}';

@@ -1,0 +1,49 @@
+{% extends "store_index/base.html" %}
+{% load static %}
+{% load store_extras %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="data:,">
+        
+        
+        {% block head %}
+        <title>Small Businesses</title>
+
+        </style>
+        {% endblock %}
+
+    </head>
+    <body>
+    {% block content %}
+        <div class="container mt-3">
+            <div class="row justify-content-center">
+                <div class="col-12 d-flex justify-content-center">
+
+                <p>
+                    Thanks for ordering! Your order number is&nbsp;<div id="orderNo"></div>.
+                </p>
+                <br>
+                <p>
+                    You can expect your order to ship in the next&nbsp;<div id="days"></div>&nbsp;days.
+                </p>
+                </div>
+                
+                </div>
+            </div>
+
+        </div>
+        <script>
+            $(document).ready(function(){
+                let div = document.getElementById('orderNo');
+                console.log(div);
+                div.innerHTML = sessionStorage.getItem('orderNo');
+                div = document.getElementById('days');
+                div.innerHTML = sessionStorage.getItem('days');
+            });
+        </script>
+    {% endblock %}
+    </body>
+</html>

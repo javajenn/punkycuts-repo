@@ -126,18 +126,18 @@ class InboxView(FolderMixin, TemplateView):
     view_name = 'inbox'
     # for TemplateView:
     template_name = 'postman/inbox.html'
-    # def get(self, request):
-    #     userid = request.user.pk
-    #     try:
-    #         customer = Customer.objects.get(User_id=userid)
-    #     except Customer.DoesNotExist:
-    #         customer = None
-    #     if not customer.is_email_verified:
-    #         messages.add_message(request, messages.ERROR, 'Email is not verified. Please check inbox and spam folder.')
-    #         return redirect('index')
-    #     else:
-    #         context = super().get_context_data()
-    #         return render(request, self.template_name, context)
+    def get(self, request):
+        userid = request.user.pk
+        try:
+            customer = Customer.objects.get(User_id=userid)
+        except Customer.DoesNotExist:
+            customer = None
+        if not customer.is_email_verified:
+            messages.add_message(request, messages.ERROR, 'Email is not verified. Please check inbox and spam folder.')
+            return redirect('index')
+        else:
+            context = super().get_context_data()
+            return render(request, self.template_name, context)
 
 
 class SentView(FolderMixin, TemplateView):
