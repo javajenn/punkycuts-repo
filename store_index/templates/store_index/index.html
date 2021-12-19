@@ -16,7 +16,6 @@
 
     <body>
         {% block content %}
-<p>You have visited this page {{ num_visits }} time{{ num_visits|pluralize }}. {{ distance }}</p>
         {% comment %} {% load index %}
         {% set_breakpoint %} {% endcomment %}
         {% if distance > 0 %}
