@@ -919,7 +919,7 @@ def orderconfirm(request):
         order.save()
         request.session['orderNo'] = randomOrderNumber
         request.session.get('orderNo', randomOrderNumber)
-        context.update({'orderNo': order.randomOrderNumber})
+        context.update({'orderNo': order.RandomOrderNumber})
         ops = OrderProduct.objects.filter(Order=order)
         totalQ = 0
         for op in ops:
