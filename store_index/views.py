@@ -633,14 +633,15 @@ def checkout(request):
 
     global_cart = cartFunct(request)
     global_cart = global_cart['globalCart']
-    for cp in global_cart:
-        if cp.Product.Status.Description == 'In Stock':
-            inv = Inventory.objects.get(Product=cp.Product, Size=cp.Size)
-            q = inv.Quantity
-            if cp.Quantity > q:
-                cp.Quantity = q
-                cp.save()
-                messages.add_message(request, messages.ERROR, 'Quantity of items in your cart have been adjusted based on current inventory.')
+    if global_cart is not None:
+        for cp in global_cart:
+            if cp.Product.Status.Description == 'In Stock':
+                inv = Inventory.objects.get(Product=cp.Product, Size=cp.Size)
+                q = inv.Quantity
+                if cp.Quantity > q:
+                    cp.Quantity = q
+                    cp.save()
+                    messages.add_message(request, messages.ERROR, 'Quantity of items in your cart have been adjusted based on current inventory.')
 
                 
     if request.method == 'POST':
