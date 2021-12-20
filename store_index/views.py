@@ -942,7 +942,7 @@ def orderconfirm(request):
         cart.delete()
         print(cart)
 
-        return JsonResponse({'orderNo': order.randomOrderNumber, 'days': days})
+        return JsonResponse({'orderNo': order.RandomOrderNumber, 'days': days})
         
     return render(request, 'store_index/confirmation.html')
 
